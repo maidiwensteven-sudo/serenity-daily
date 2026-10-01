@@ -99,10 +99,10 @@
     <div class="tabs rtabs"><button type="button" data-rep="daily" class="on">日報 Daily</button><button type="button" data-rep="weekly">週報 Weekly</button></div>
     <article class="report" id="rep-daily">
       <div class="rhead"><h2>10 月 2 日沒有新帖</h2><span class="status">沒有新帖</span></div>
-      <p class="when">Daily · 2026-10-02 · 每天 09:30 台北更新</p>
+      <p class="when">Daily · 2026-10-02 · 每天 09:30 更新</p>
       <div class="lead">
-        <p>台北時間 10 月 2 日凌晨檢查，9 月 30 日 20:39 UTC 之後沒有新的原創研究帖。09:30 會再查一次。下面是最近一個有內容的交易日，不是今天的新觀點。</p>
-        <p class="en">Checked in the early hours of 2 Oct, Taipei. No new original research post after 30 Sep, 20:39 UTC. The 09:30 run will check again. Below is the last session with posts, not a new call today.</p>
+        <p>2026-10-01 16:32 UTC 檢查，9 月 30 日 20:39 UTC 之後沒有新的原創研究帖。09:30 會再查一次。下面是最近一個有內容的交易日，不是今天的新觀點。</p>
+        <p class="en">Checked at 2026-10-01 16:32 UTC. No new original research post after 30 Sep, 20:39 UTC. The 09:30 run will check again. Below is the last session with posts, not a new call today.</p>
       </div>
       <p class="daylabel">9 月 30 日 · 三則</p>
       <div class="rcard"><div class="n">1</div><div>
@@ -126,7 +126,7 @@
     </article>
     <article class="report hide" id="rep-weekly">
       <div class="rhead"><h2>光子產能，和 Amazon 的供應鏈地圖</h2><span class="status">進行中</span></div>
-      <p class="when">Weekly · 2026-09-28 至 2026-10-04 · 星期日 09:30 台北改寫</p>
+      <p class="when">Weekly · 2026-09-28 至 2026-10-04 · 星期日 09:30 改寫</p>
       <div class="lead">
         <p>這週主線不是新的 neocloud。她在寫兩件事：高功率雷射產能被預鎖，以及 Amazon 把持股從雷射、ASIC 拉到 PCB 和組裝。</p>
         <p class="en">The week is not a new neocloud call. It is a laser-capacity lock, and Amazon extending its stakes from lasers and ASICs into PCBs and assembly.</p>
@@ -151,7 +151,7 @@
       <div class="quiet">
         <h3>還沒寫到的</h3>
         <p>10 月 1 日和 2 日沒有新的原創研究帖。星期日 09:30 會把這週收到 10 月 4 日再改寫一次。</p>
-        <p class="en">No new original research post on 1 or 2 Oct. Sunday at 09:30 Taipei rewrites the week through 4 Oct.</p>
+        <p class="en">No new original research post on 1 or 2 Oct. Sunday at 09:30 rewrites the week through 4 Oct.</p>
       </div>
     </article>
   </section>
@@ -163,7 +163,7 @@
   <aside class="feed"><h2>新貼文</h2><p class="hint" id="feed-meta"></p><div id="feed"></div></aside>
   </div>
   <div class="banner"><b>獨立筆記。不是她的產品，不是投資建議。</b> 整理自 @aleabitoreddit 公開貼文。只放短摘和原文連結，不轉載全文。價格沒有收盤來源就標未核對，不估算報酬。她可能持有相關標的。</div>
-  <div class="note" id="changelog">上次檢查 2026-10-02 00:32 台北。2026-10-02 補進 2025-07 以及 2026 年 1、2、4、5、7、8 月查到的原創帖，和數則點到代號的回覆。回覆還沒有逐月收完，表上的次數仍不是她的全部。</div>
+  <div class="note" id="changelog">2026-10-01 16:32 UTC</div>
   
   
   <footer>這是整理工具，不是投資建議。多空是根據原文做的判斷，可能判錯。決定前看原文。</footer>
@@ -605,6 +605,6 @@ document.querySelectorAll(".rtabs button").forEach(b => b.onclick = () => {
 });
 document.getElementById("mask").onclick = e => { if (e.target.id==="mask") e.currentTarget.classList.remove("open"); };
 document.getElementById("feed").innerHTML = FEED.map(p => `<article class="post"><time>${p.date} UTC</time>${bi(p.text)}<a href="https://x.com/aleabitoreddit/status/${p.id}" target="_blank">原文 Original →</a></article>`).join("");
-document.getElementById("feed-meta").textContent = "上次檢查 2026-10-02 00:32 台北。這次沒有新的原創帖。最新仍是 2026-09-30 20:39 UTC。";
+document.getElementById("feed-meta").textContent = "2026-10-01 16:32 UTC";
 render();
 </script></body></html>
