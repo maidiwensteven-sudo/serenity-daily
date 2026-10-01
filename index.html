@@ -40,7 +40,9 @@
   .en { color:#7a756c; font-size:13px; line-height:1.45; }
   .mask { position:fixed; inset:0; background:rgba(22,21,19,.42); display:none; align-items:center; justify-content:center; padding:28px; z-index:20; }
   .mask.open { display:flex; }
-  .modal { width:min(680px, 100%); max-height:84vh; overflow:auto; background:#f7f5f0; border-radius:20px; padding:22px; box-shadow:0 24px 60px rgba(28,27,25,.18); }
+  .shiftbar { background:#fff; border:1px solid #eeeae2; border-radius:14px; padding:12px 16px; margin:12px 0 4px; font-size:14px; line-height:1.55; }
+  .modal h4 { margin:18px 0 6px; font-size:13px; }
+  .modal { width:min(760px, 100%); max-height:84vh; overflow:auto; background:#f7f5f0; border-radius:20px; padding:22px; box-shadow:0 24px 60px rgba(28,27,25,.18); }
   .modal header { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
   .kicker { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:#8a847a; }
   .modal h3 { font-family:Newsreader, serif; font-size:40px; line-height:.95; margin:4px 0 0; }
@@ -72,6 +74,8 @@
   <div class="tabs stance"><button data-r="theme" class="on">Themes 主題</button><button data-r="day">Daily 日</button><button data-r="week">Weekly 週</button><button data-r="month">Monthly 月</button></div>
   <div class="head"><h1 id="title">Serenity Tracker</h1><div class="range" id="range"></div></div>
   <input id="q" placeholder="搜尋代號，例如 LITE、JBL" />
+  <div class="shiftbar" id="shiftbar"></div>
+  <p class="hint">自首次是第一次明確說多或空之後的收盤，算到 2026-10-01。來源 Yahoo Finance 日收盤。GitHub 沒有股價 API。沒有這個來源的不填。</p>
   <section class="reports">
     <div class="tabs rtabs"><button type="button" data-rep="daily" class="on">日報 Daily</button><button type="button" data-rep="weekly">週報 Weekly</button></div>
     <article class="report" id="rep-daily">
@@ -110,14 +114,14 @@
   <p class="hint">點代號看每次判斷、日期和原文。右欄是已收錄的原創帖，沒有新帖會直接寫沒有。</p>
   <div class="grid" id="cards"></div>
   <div class="split">
-  <div class="tablewrap"><table><thead><tr><th>Stock</th><th>Bull %</th><th>Position split</th><th>Bear %</th><th>Mentions</th><th>Bullish</th><th>Bearish</th><th>Neutral</th><th>Latest</th></tr></thead><tbody id="rows"></tbody></table></div>
+  <div class="tablewrap"><table><thead><tr><th>Stock</th><th>Bull %</th><th>Position split</th><th>Bear %</th><th>Mentions</th><th>Bullish</th><th>Bearish</th><th>Neutral</th><th>First</th><th>Since</th><th>Latest</th></tr></thead><tbody id="rows"></tbody></table></div>
   <aside class="feed"><h2>新貼文</h2><p class="hint" id="feed-meta"></p><div id="feed"></div></aside>
   </div>
   <div class="banner"><b>獨立筆記。不是她的產品，不是投資建議。</b> 整理自 @aleabitoreddit 公開貼文。只放短摘和原文連結，不轉載全文。價格沒有收盤來源就標未核對，不估算報酬。她可能持有相關標的。</div>
   <div class="note" id="changelog">上次檢查 2026-10-02 00:32 台北。這次沒有新的原創研究帖。最新仍是 2026-09-30 20:39 UTC。日報每天 09:30 更新，週報星期日 09:30 改寫。</div>
   
   
-  <footer>非投資建議。中文是判斷摘要，英文是對照，點連結才是原帖。</footer>
+  <footer>這是整理工具，不是投資建議。多空是根據原文做的判斷，可能判錯。決定前看原文。</footer>
 </div>
 <div class="mask" id="mask"><div class="modal" id="modal"></div></div>
 <script>
@@ -323,36 +327,105 @@ function cards(){
 function table(){
   document.getElementById("rows").innerHTML = rows.map(r => {
     const n = r.items.length || 1, bp = Math.round(r.bull/n*100), sp = Math.round(r.bear/n*100);
-    return `<tr><td class="name"><button class="link" data-t="${r.t}">${r.t}</button><small>${r.name}</small></td><td>${bp}%</td><td><div class="bar"><i style="width:${bp}%;background:#2f8f55"></i><i style="width:${sp}%;background:#c45a4a"></i></div></td><td>${sp}%</td><td><button class="link" data-t="${r.t}">${n}</button></td><td class="pos">${r.bull}</td><td class="neg">${r.bear}</td><td>${r.neut}</td><td>${r.last}</td></tr>`;
+    const g = GAIN[r.t];
+    const since = g ? `<span class="${g.pct>=0?"pos":"neg"}">${signed(g.pct)}</span>` : "—";
+    return `<tr><td class="name"><button class="link" data-t="${r.t}">${r.t}</button><small>${r.name}</small></td><td>${bp}%</td><td><div class="bar"><i style="width:${bp}%;background:#2f8f55"></i><i style="width:${sp}%;background:#c45a4a"></i></div></td><td>${sp}%</td><td><button class="link" data-t="${r.t}">${n}</button></td><td class="pos">${r.bull}</td><td class="neg">${r.bear}</td><td>${r.neut}</td><td>${FIRST[r.t]||""}</td><td>${since}</td><td>${r.last}</td></tr>`;
   }).join("");
 }
 
-const PX = {
-  "LITE|2026-09-09":"收盤 988.98。7 日後 919.40，-7.0%。30 日尚未到期。來源：Investing 收盤",
-  "LITE|2026-09-16":"收盤 919.40。7 日後 937.00，+1.9%。30 日尚未到期。來源：Investing 收盤",
-  "LITE|2026-09-23":"收盤 937.00。7 日後 971.26，+3.7%。30 日尚未到期。來源：Investing 收盤",
-  "LITE|2026-09-28":"收盤 921.32。7 日尚未到期，不把盤中價當成 7 日報酬。來源：Investing 收盤",
-  "JBL|2026-09-24":"收盤 310.69。7 日尚未到期。來源：MarketWatch 收盤",
-  "JBL|2026-09-30":"收盤 286.86，當日 -10.0%。7 日、30 日都尚未到期。來源：MarketWatch 收盤",
-  "NVDA|2026-09-28":"收盤 228.86。7 日、30 日尚未到期。來源：MarketWatch 收盤",
-  "MU|2026-09-23":"收盤 1,071.88。7 日後 1,065.11，-0.6%。30 日尚未到期。來源：MarketWatch 收盤",
-  "MU|2026-09-24":"收盤 1,080.53。7 日、30 日尚未到期。來源：MarketWatch 收盤",
-  "MU|2026-09-30":"收盤 1,065.11。7 日、30 日尚未到期。這則她只說稍後再評。來源：MarketWatch 收盤",
-  "NBIS|2025-11-17":"帖內寫 86.69。這是她當下引用的價格，不是這裡核對的收盤。7 日、30 日未核對"
-};
-function priceLine(t, date){ return PX[t+"|"+date] || "提及價、7 日、30 日未核對。沒有來源就不填數字。"; }
+const GAIN = {"NBIS":{"dir":"2025-09-29","entryDate":"2025-09-29","entry":110.22,"latestDate":"2026-10-01","latest":233.21,"pct":111.6,"d7":{"date":"2025-10-06","px":124.94,"pct":13.4},"d30":{"date":"2025-10-29","px":125.1,"pct":13.5}},"HIMS":{"dir":"2025-09-29","entryDate":"2025-09-29","entry":59.12,"latestDate":"2026-10-01","latest":29.29,"pct":-50.5,"d7":{"date":"2025-10-06","px":54.76,"pct":-7.4},"d30":{"date":"2025-10-29","px":46.63,"pct":-21.1}},"AAOI":{"dir":"2025-12-23","entryDate":"2025-12-23","entry":40.64,"latestDate":"2026-10-01","latest":105.16,"pct":158.8,"d7":{"date":"2025-12-30","px":36.02,"pct":-11.4},"d30":{"date":"2026-01-22","px":38.15,"pct":-6.1}},"MRVL":{"dir":"2025-12-23","entryDate":"2025-12-23","entry":87.55,"latestDate":"2026-10-01","latest":268.14,"pct":206.3,"d7":{"date":"2025-12-30","px":86.63,"pct":-1.0},"d30":{"date":"2026-01-22","px":83.04,"pct":-5.2}},"LITE":{"dir":"2025-12-23","entryDate":"2025-12-23","entry":387.41,"latestDate":"2026-10-01","latest":1044.73,"pct":169.7,"d7":{"date":"2025-12-30","px":371.18,"pct":-4.2},"d30":{"date":"2026-01-22","px":354.49,"pct":-8.5}},"COHR":{"dir":"2025-12-23","entryDate":"2025-12-23","entry":191.87,"latestDate":"2026-10-01","latest":318.92,"pct":66.2,"d7":{"date":"2025-12-30","px":186.81,"pct":-2.6},"d30":{"date":"2026-01-22","px":202.72,"pct":5.7}},"AXTI":{"dir":"2025-12-26","entryDate":"2025-12-26","entry":15.37,"latestDate":"2026-10-01","latest":82.17,"pct":434.6,"d7":{"date":"2026-01-02","px":16.76,"pct":9.0},"d30":{"date":"2026-01-26","px":17.8,"pct":15.8}},"IREN":{"dir":"2025-12-30","entryDate":"2025-12-30","entry":38.3,"latestDate":"2026-10-01","latest":40.22,"pct":5.0,"d7":{"date":"2026-01-06","px":45.91,"pct":19.9},"d30":{"date":"2026-01-29","px":59.84,"pct":56.2}},"CIFR":{"dir":"2025-12-30","entryDate":"2025-12-30","entry":14.59,"latestDate":"2026-10-01","latest":15.17,"pct":4.0,"d7":{"date":"2026-01-06","px":17.54,"pct":20.2},"d30":{"date":"2026-01-29","px":17.7,"pct":21.3}},"WULF":{"dir":"2025-12-30","entryDate":"2025-12-30","entry":11.15,"latestDate":"2026-10-01","latest":14.83,"pct":33.0,"d7":{"date":"2026-01-06","px":13.18,"pct":18.2},"d30":{"date":"2026-01-29","px":14.54,"pct":30.4}},"MSTR":{"dir":"2025-12-31","entryDate":"2025-12-31","entry":151.95,"latestDate":"2026-10-01","latest":159.5,"pct":5.0,"d7":{"date":"2026-01-07","px":161.83,"pct":6.5},"d30":{"date":"2026-01-30","px":149.71,"pct":-1.5}},"AEHR":{"dir":"2026-03-31","entryDate":"2026-03-31","entry":37.08,"latestDate":"2026-10-01","latest":101.86,"pct":174.7,"d7":{"date":"2026-04-07","px":50.25,"pct":35.5},"d30":{"date":"2026-04-30","px":90.56,"pct":144.2}},"MU":{"dir":"2026-06-26","entryDate":"2026-06-26","entry":1132.16,"latestDate":"2026-10-01","latest":1068.73,"pct":-5.6,"d7":{"date":"2026-07-06","px":984.75,"pct":-13.0},"d30":{"date":"2026-07-27","px":900.2,"pct":-20.5}},"GOOGL":{"dir":"2026-09-30","entryDate":"2026-09-30","entry":344.08,"latestDate":"2026-10-01","latest":338.31,"pct":-1.7,"d7":null,"d30":null},"CRWV":{"dir":"2025-11-17","entryDate":"2025-11-17","entry":75.33,"latestDate":"2026-10-01","latest":86.61,"pct":15.0,"d7":{"date":"2025-11-24","px":73.6,"pct":-2.3},"d30":{"date":"2025-12-17","px":64.55,"pct":-14.3}},"ORCL":{"dir":"2025-11-17","entryDate":"2025-11-17","entry":217.76,"latestDate":"2026-10-01","latest":137.74,"pct":-36.7,"d7":{"date":"2025-11-24","px":198.37,"pct":-8.9},"d30":{"date":"2025-12-17","px":176.76,"pct":-18.8}},"APLD":{"dir":"2025-11-17","entryDate":"2025-11-17","entry":22.93,"latestDate":"2026-10-01","latest":24.25,"pct":5.7,"d7":{"date":"2025-11-24","px":23.79,"pct":3.7},"d30":{"date":"2025-12-17","px":22.0,"pct":-4.1}},"GLW":{"dir":"2026-09-09","entryDate":"2026-09-09","entry":168.46,"latestDate":"2026-10-01","latest":158.74,"pct":-5.8,"d7":{"date":"2026-09-16","px":144.16,"pct":-14.4},"d30":null},"SNDK":{"dir":"2026-09-15","entryDate":"2026-09-15","entry":1530.9,"latestDate":"2026-10-01","latest":1779.96,"pct":16.3,"d7":{"date":"2026-09-22","px":1887.04,"pct":23.3},"d30":null},"CRWD":{"dir":"2026-09-15","entryDate":"2026-09-15","entry":242.49,"latestDate":"2026-10-01","latest":265.42,"pct":9.5,"d7":{"date":"2026-09-22","px":250.06,"pct":3.1},"d30":null},"INTC":{"dir":"2026-09-15","entryDate":"2026-09-15","entry":97.14,"latestDate":"2026-10-01","latest":120.52,"pct":24.1,"d7":{"date":"2026-09-22","px":123.86,"pct":27.5},"d30":null},"AMD":{"dir":"2026-09-15","entryDate":"2026-09-15","entry":504.2,"latestDate":"2026-10-01","latest":614.73,"pct":21.9,"d7":{"date":"2026-09-22","px":623.77,"pct":23.7},"d30":null},"EWY":{"dir":"2026-09-21","entryDate":"2026-09-21","entry":189.16,"latestDate":"2026-10-01","latest":184.65,"pct":-2.4,"d7":{"date":"2026-09-28","px":183.58,"pct":-2.9},"d30":null},"ARM":{"dir":"2026-09-22","entryDate":"2026-09-22","entry":333.2,"latestDate":"2026-10-01","latest":293.45,"pct":-11.9,"d7":{"date":"2026-09-29","px":293.67,"pct":-11.9},"d30":null},"AKAM":{"dir":"2026-09-24","entryDate":"2026-09-24","entry":110.41,"latestDate":"2026-10-01","latest":105.85,"pct":-4.1,"d7":{"date":"2026-10-01","px":105.85,"pct":-4.1},"d30":null},"JBL":{"dir":"2026-09-24","entryDate":"2026-09-24","entry":310.69,"latestDate":"2026-10-01","latest":297.3,"pct":-4.3,"d7":{"date":"2026-10-01","px":297.3,"pct":-4.3},"d30":null},"AMZN":{"dir":"2026-09-30","entryDate":"2026-09-30","entry":249.15,"latestDate":"2026-10-01","latest":248.21,"pct":-0.4,"d7":null,"d30":null}};
+
+const FIRST = {};
+POSTS.forEach(p => p.tags.forEach(t => { if (!FIRST[t[0]]) FIRST[t[0]] = p.date; }));
+function fullItems(t){
+  const items = [];
+  POSTS.forEach(p => p.tags.forEach(tag => {
+    if (tag[0] !== t) return;
+    items.push({date:p.date, id:p.id, stance:tag[1], note:tag[3], name:tag[2]});
+  }));
+  return items;
+}
+function zhStance(s){ return s==="bull" ? "多頭" : s==="bear" ? "空頭" : "中立"; }
+function enStance(s){ return s==="bull" ? "long" : s==="bear" ? "short" : "neutral"; }
+function money(n){ return Number(n).toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function signed(n){ return (n>0?"+":"") + Number(n).toFixed(1) + "%"; }
+function gainBlock(t){
+  const g = GAIN[t];
+  if (!g) return `<p class="px">不計漲幅。沒有明確多空，或 Yahoo Finance 沒有這個代號。GitHub 沒有股價 API，這裡不估算。</p><p class="en">No return. There is no directional call, or Yahoo Finance has no listing. GitHub has no price API, so nothing is estimated.</p>`;
+  const d7 = g.d7 ? `7 日後 ${g.d7.date} 收盤 ${money(g.d7.px)}，${signed(g.d7.pct)}。` : "7 日尚未到期。";
+  const d30 = g.d30 ? `30 日後 ${g.d30.date} 收盤 ${money(g.d30.px)}，${signed(g.d30.pct)}。` : "30 日尚未到期。";
+  const d7e = g.d7 ? `Seven days later, ${g.d7.date} close ${money(g.d7.px)}, ${signed(g.d7.pct)}.` : "The 7-day window is not closed.";
+  const d30e = g.d30 ? `Thirty days later, ${g.d30.date} close ${money(g.d30.px)}, ${signed(g.d30.pct)}.` : "The 30-day window is not closed.";
+  return `<p class="px">首次明確多空 ${g.dir}。計價用 ${g.entryDate} 收盤 ${money(g.entry)}，到 ${g.latestDate} 收盤 ${money(g.latest)}，${signed(g.pct)}。${d7}${d30}來源：Yahoo Finance 日收盤。這是價格變化，不是她現在該不該持有。</p><p class="en">First directional call ${g.dir}. From the ${g.entryDate} close of ${money(g.entry)} to the ${g.latestDate} close of ${money(g.latest)}, ${signed(g.pct)}. ${d7e} ${d30e} Source: Yahoo Finance daily close. A price change, not a verdict on the current stance.</p>`;
+}
+function keyPosts(items){
+  const keys = [];
+  const add = it => { if (it && !keys.some(k => k.id===it.id)) keys.push(it); };
+  add(items.find(i => i.stance==="bull" || i.stance==="bear") || items[0]);
+  let prev = items[0].stance;
+  for (const it of items.slice(1)) { if (it.stance !== prev) { add(it); break; } }
+  add(items[items.length-1]);
+  for (const it of items) { if (keys.length>=3) break; add(it); }
+  return keys.slice(0, 3);
+}
+function risksOf(items){
+  const words = ["增發","稀釋","延期","不買","地緣"];
+  return items.filter(it => words.some(w => String(it.note).includes(w)));
+}
+function arcText(items){
+  const seq = [];
+  let prev = null;
+  items.forEach(it => { if (it.stance !== prev) { seq.push(it); prev = it.stance; } });
+  if (seq.length < 2) return `<p>從 ${seq[0].date} 起，已收錄的提及一直是${zhStance(seq[0].stance)}，沒有改口。</p><p class="en">From ${seq[0].date}, every collected mention stays ${enStance(seq[0].stance)}. No change of view.</p>`;
+  return `<p>${seq.map(it => it.date + " " + zhStance(it.stance)).join(" → ")}。</p><p class="en">${seq.map(it => it.date + " " + enStance(it.stance)).join(" → ")}.</p>`;
+}
+function postItem(it){
+  return `<div class="item"><div><b>${it.date.slice(5)}</b><span>${it.date.slice(0,4)} · ${label[it.stance]}</span></div><div>${bi(it.note)}<a href="https://x.com/aleabitoreddit/status/${it.id}" target="_blank">原文 Original →</a></div></div>`;
+}
 function openTicker(t){
-  const r = rows.find(x => x.t===t); if (!r) return;
-  const lead = r.bull>r.bear ? "整體偏多" : r.bear>r.bull ? "整體偏空" : "多空交錯";
-  const leadEn = r.bull>r.bear ? "Net long" : r.bear>r.bull ? "Net short" : "Mixed";
-  document.getElementById("modal").innerHTML = `<header><div><div class="kicker">${r.name}</div><h3>${r.t}</h3><div class="pill ${r.bear>r.bull?"neg":""}">${lead} · ${r.items.length} 次</div></div><button class="x" id="close">×</button></header><p class="sum">${leadEn}. ${r.items.length} mentions, one note each. 每次提及一段，中文在上，英文在下。</p><div class="tl">` + r.items.slice().reverse().map(item=>`<div class="item"><div><b>${item.date.slice(5)}</b><span>${item.date.slice(0,4)} · ${label[item.stance]}</span></div><div>${bi(item.note)}<p class="px">${priceLine(r.t, item.date)}</p><a href="https://x.com/aleabitoreddit/status/${item.id}" target="_blank">原文 Original →</a></div></div>`).join("") + `</div>`;
+  const items = fullItems(t);
+  if (!items.length) return;
+  const bulls = items.filter(i => i.stance==="bull").length;
+  const bears = items.filter(i => i.stance==="bear").length;
+  const lead = bulls>bears ? "整體偏多" : bears>bulls ? "整體偏空" : "多空交錯";
+  const latest = items[items.length-1];
+  const keys = keyPosts(items);
+  const risks = risksOf(items);
+  const riskHtml = risks.length ? `<div class="tl">${risks.map(postItem).join("")}</div>` : `<p>這批摘要裡沒有另寫她點出的風險。</p><p class="en">These notes do not record a separate risk she named.</p>`;
+  document.getElementById("modal").innerHTML = `<header><div><div class="kicker">${items[0].name}</div><h3>${t}</h3><div class="pill ${bears>bulls?"neg":""}">${lead} · ${items.length} 次</div></div><button class="x" id="close">×</button></header>${gainBlock(t)}<h4>最新觀點</h4><p class="when">${latest.date} · ${label[latest.stance]}</p>${bi(latest.note)}<a href="https://x.com/aleabitoreddit/status/${latest.id}" target="_blank">原文 Original →</a><h4>論點怎麼變</h4>${arcText(items)}<h4>關鍵帖 · ${keys.length}</h4><div class="tl">${keys.map(postItem).join("")}</div><h4>她提過的風險</h4>${riskHtml}<h4>全部提及 · ${items.length}</h4><div class="tl">${items.slice().reverse().map(postItem).join("")}</div>`;
   document.getElementById("mask").classList.add("open");
   document.getElementById("close").onclick = () => document.getElementById("mask").classList.remove("open");
 }
+function renderShifts(){
+  const by = {};
+  POSTS.forEach(p => p.tags.forEach(tag => {
+    if (!by[tag[0]]) by[tag[0]] = [];
+    by[tag[0]].push({date:p.date, stance:tag[1]});
+  }));
+  const flips = [];
+  const first = {};
+  Object.entries(by).forEach(([t, items]) => {
+    first[t] = items[0].date;
+    let prev = items[0].stance;
+    for (let i=1;i<items.length;i++){
+      if (items[i].stance !== prev){ flips.push({t, date:items[i].date, from:prev, to:items[i].stance}); prev = items[i].stance; }
+    }
+  });
+  const seen = new Set();
+  const latestFlips = [];
+  flips.sort((a,b) => a.date < b.date ? 1 : -1);
+  flips.forEach(f => { if (seen.has(f.t)) return; seen.add(f.t); latestFlips.push(f); });
+  const btn = t => `<button class="link" data-t="${t}">${t}</button>`;
+  const born = Object.entries(first).filter(([,d]) => d==="2026-09-30").map(([t]) => btn(t)).join("、");
+  const flipHtml = latestFlips.map(f => `${btn(f.t)} ${f.date.slice(5)} ${zhStance(f.from)}→${zhStance(f.to)}`).join(" · ");
+  const flipEn = latestFlips.map(f => `${f.t} ${f.date.slice(5)} ${enStance(f.from)} to ${enStance(f.to)}`).join("; ");
+  document.getElementById("shiftbar").innerHTML = `<b>10 月 2 日沒有新代號。</b>最近一個有帖的交易日 9 月 30 日第一次出現：${born || "沒有"}。已收錄裡每檔最近一次改口：${flipHtml || "沒有"}。<p class="en">No new ticker on 2 Oct. First appearances on 30 Sep: ${Object.entries(first).filter(([,d]) => d==="2026-09-30").map(([t]) => t).join(", ") || "none"}. Latest recorded change: ${flipEn || "none"}.</p>`;
+}
+
 function render(){
   document.getElementById("title").textContent = {theme:"Serenity Tracker",day:"當日立場",week:"本週立場",month:"本月立場"}[mode];
   document.getElementById("range").textContent = mode==="day" ? "2026-09-30" : mode==="week" ? "2026-09-24 起" : "";
-  rows = agg(); cards(); table();
+  rows = agg(); cards(); table(); renderShifts();
   document.querySelectorAll("[data-t]").forEach(el => el.onclick = () => openTicker(el.dataset.t));
 }
 document.getElementById("q").oninput = () => { const q = document.getElementById("q").value.trim().toUpperCase(); document.querySelectorAll("#rows tr").forEach(tr => tr.style.display = !q || tr.innerText.toUpperCase().includes(q) ? "" : "none"); };
