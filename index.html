@@ -38,7 +38,7 @@
   #q { width:min(360px, 100%); border:1px solid #e6e1d6; border-radius:10px; padding:10px 12px; font:inherit; background:#fff; margin-bottom:8px; }
   .px { margin-top:6px; font-size:12px; color:#6d675d; }
   .en { color:#7a756c; font-size:13px; line-height:1.45; }
-  .mask { position:fixed; inset:0; background:rgba(22,21,19,.42); display:none; align-items:center; justify-content:center; padding:28px; z-index:20; }
+  .mask { position:fixed; inset:0; background:rgba(22,21,19,.42); display:none; align-items:center; justify-content:center; padding:28px; z-index:40; }
   .mask.open { display:flex; }
   .shiftbar { background:#fff; border:1px solid #eeeae2; border-radius:14px; padding:10px 16px; margin:12px 0 14px; }
   .shiftrow { display:flex; gap:12px; align-items:baseline; padding:5px 0; }
@@ -75,7 +75,22 @@
   .report h3 { font-size:14px; margin:14px 0 4px; }
   .report p { font-size:14px; line-height:1.55; margin:6px 0; }
   .report a { color:#335fd1; font-size:13px; }
-  @media (max-width:980px) { .grid, .split, .item { grid-template-columns:1fr; } .head { flex-direction:column; align-items:flex-start; gap:6px; } .tabs { max-width:100%; } h1 { font-size:28px; } #q { width:100%; } }
+  .ask-fab { position:fixed; right:22px; bottom:22px; z-index:30; border:0; background:#1c1b19; color:#fff; border-radius:999px; padding:12px 16px; font:inherit; cursor:pointer; }
+  .ask { position:fixed; right:22px; bottom:74px; z-index:30; width:min(380px, calc(100vw - 24px)); height:min(520px, calc(100vh - 120px)); background:#f7f5f0; border:1px solid #e6e1d6; border-radius:18px; box-shadow:0 18px 50px rgba(28,27,25,.16); display:none; flex-direction:column; }
+  .ask.open { display:flex; }
+  .ask header { display:flex; justify-content:space-between; align-items:center; padding:12px 14px; border-bottom:1px solid #e6e1d6; }
+  .ask header b { font-family:Newsreader, serif; font-size:22px; font-weight:550; }
+  .ask header button, .ask form button { border:0; background:#1c1b19; color:#fff; border-radius:10px; font:inherit; cursor:pointer; }
+  .ask header button { width:32px; height:32px; border-radius:50%; background:#fff; color:#1c1b19; }
+  .ask-log { flex:1; overflow:auto; padding:12px 14px; }
+  .bubble { margin:0 0 10px; padding:10px 12px; border-radius:12px; background:#fff; border:1px solid #eeeae2; font-size:14px; line-height:1.5; }
+  .bubble.user { margin-left:36px; background:#efece4; border-color:transparent; }
+  .bubble p { margin:4px 0; }
+  .bubble a { color:#335fd1; }
+  .ask form { display:flex; gap:8px; padding:10px; border-top:1px solid #e6e1d6; }
+  .ask input { flex:1; border:1px solid #e6e1d6; border-radius:10px; padding:10px; font:inherit; background:#fff; }
+  .ask form button { padding:0 14px; }
+  @media (max-width:980px) { .grid, .split, .item { grid-template-columns:1fr; } .head { flex-direction:column; align-items:flex-start; gap:6px; } .tabs { max-width:100%; } h1 { font-size:28px; } #q { width:100%; } .ask { left:12px; right:12px; width:auto; } }
 </style></head><body>
 <div class="page">
   <div class="tabs stance"><button data-r="theme" class="on">Themes 主題</button><button data-r="day">Daily 日</button><button data-r="week">Weekly 週</button><button data-r="month">Monthly 月</button></div>
@@ -130,6 +145,12 @@
   <footer>這是整理工具，不是投資建議。多空是根據原文做的判斷，可能判錯。決定前看原文。</footer>
 </div>
 <div class="mask" id="mask"><div class="modal" id="modal"></div></div>
+<button class="ask-fab" id="ask-open" type="button">問紀錄</button>
+<aside class="ask" id="ask">
+  <header><b>問紀錄</b><button type="button" id="ask-x">×</button></header>
+  <div class="ask-log" id="ask-log"></div>
+  <form id="ask-form"><input id="ask-q" placeholder="問一個代號，或問今天、哪些偏空" /><button type="submit">送出</button></form>
+</aside>
 <script>
 const N = (zh,en) => zh + "||" + en;
 const POSTS = [
@@ -425,5 +446,68 @@ document.querySelectorAll(".rtabs button").forEach(b => b.onclick = () => {
 document.getElementById("mask").onclick = e => { if (e.target.id==="mask") e.currentTarget.classList.remove("open"); };
 document.getElementById("feed").innerHTML = FEED.map(p => `<article class="post"><time>${p.date} UTC</time>${bi(p.text)}<a href="https://x.com/aleabitoreddit/status/${p.id}" target="_blank">原文 Original →</a></article>`).join("");
 document.getElementById("feed-meta").textContent = "上次檢查 2026-10-02 00:32 台北。這次沒有新的原創帖。最新仍是 2026-09-30 20:39 UTC。";
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    if (c === "&") return "&" + "amp;";
+    if (c === "<") return "&" + "lt;";
+    if (c === ">") return "&" + "gt;";
+    return "&" + "quot;";
+  });
+}
+function findTickers(q){
+  const up = q.toUpperCase();
+  const hit = Object.keys(FIRST).filter(t => new RegExp("(^|[^A-Z0-9])" + t + "([^A-Z0-9]|$)").test(up));
+  const alias = {"美光":"MU","輝達":"NVDA","英偉達":"NVDA","谷歌":"GOOGL","亞馬遜":"AMZN"};
+  Object.entries(alias).forEach(([name, t]) => { if (q.includes(name) && FIRST[t] && !hit.includes(t)) hit.push(t); });
+  POSTS.forEach(p => p.tags.forEach(tag => {
+    if (tag[2] && tag[2].length > 3 && up.includes(tag[2].toUpperCase()) && !hit.includes(tag[0])) hit.push(tag[0]);
+  }));
+  return hit.slice(0, 3);
+}
+function tickerBrief(t, q){
+  const items = fullItems(t);
+  const latest = items[items.length - 1];
+  const zh = String(latest.note).split("||")[0];
+  const g = GAIN[t];
+  const gain = g ? `<p>自首次 ${signed(g.pct)}。${g.entryDate} 收盤 ${money(g.entry)}，${g.latestDate} 收盤 ${money(g.latest)}。</p>` : "";
+  const wantRisk = /風險|risk/i.test(q);
+  const wantArc = /改口|變化|怎麼變|立場/.test(q);
+  const risks = wantRisk ? risksOf(items) : [];
+  const risk = risks.length ? `<p>她提過的風險：${risks.map(it => esc(String(it.note).split("||")[0])).join(" ")}</p>` : (wantRisk ? `<p>這批摘要裡沒有另寫風險。</p>` : "");
+  const arc = wantArc ? arcText(items) : "";
+  return `<p><button class="link" data-t="${t}">${t}</button> · ${label[latest.stance]} · ${latest.date}</p><p>${esc(zh)}</p>${arc}${risk}${gain}<p><a href="https://x.com/aleabitoreddit/status/${latest.id}" target="_blank">原文</a></p>`;
+}
+function answerQuestion(q){
+  const tickers = findTickers(q);
+  if (tickers.length) return tickers.map(t => tickerBrief(t, q)).join("");
+  if (/今天|日報|新帖|更新/.test(q)) return `<p>10 月 2 日沒有新的原創帖。最近一則仍是 2026-09-30。</p><p class="en">No new original post on 2 Oct. The latest remains 30 Sep.</p>`;
+  if (/週報|這週|本週/.test(q)) return `<p>這週寫的是雷射產能，以及 Amazon 把持股拉到 PCB 和組裝。9 月 28 日是 LITE，9 月 30 日是 AMZN、JBL、GOOGL。已收錄的帖裡這週沒有新的改口。</p>`;
+  if (/空頭|偏空|做空/.test(q)){
+    const names = Object.keys(FIRST).filter(t => { const items = fullItems(t); return items[items.length-1].stance==="bear"; });
+    return names.length ? `<p>最近一次提及是空頭的有：${names.map(t => `<button class="link" data-t="${t}">${t}</button>`).join(" ")}</p>` : `<p>已收錄裡沒有最近一次是空頭的代號。</p>`;
+  }
+  return `<p>這份紀錄對不上。問一個代號，或問今天、本週、哪些偏空。</p><p class="en">Not in this record. Ask a ticker, or ask about today, this week, or the shorts.</p>`;
+}
+function addBubble(html, who){
+  const el = document.createElement("div");
+  el.className = "bubble " + who;
+  el.innerHTML = html;
+  const log = document.getElementById("ask-log");
+  log.appendChild(el);
+  log.scrollTop = log.scrollHeight;
+  el.querySelectorAll("[data-t]").forEach(b => b.onclick = () => openTicker(b.dataset.t));
+}
+document.getElementById("ask-open").onclick = () => document.getElementById("ask").classList.add("open");
+document.getElementById("ask-x").onclick = () => document.getElementById("ask").classList.remove("open");
+document.getElementById("ask-form").onsubmit = e => {
+  e.preventDefault();
+  const input = document.getElementById("ask-q");
+  const q = input.value.trim();
+  if (!q) return;
+  addBubble(`<p>${esc(q)}</p>`, "user");
+  input.value = "";
+  addBubble(answerQuestion(q), "bot");
+};
+addBubble(`<p>只查已收錄的帖，沒寫到的不推測。</p><p class="en">Answers come only from the collected posts.</p>`, "bot");
 render();
 </script></body></html>
