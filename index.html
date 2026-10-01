@@ -22,17 +22,22 @@
   .tick { display:flex; justify-content:space-between; align-items:flex-end; margin-top:18px; } .tick b { font-size:22px; }
   .meta { display:flex; justify-content:space-between; margin-top:6px; font-size:12px; color:#8a847a; }
   .pos { color:var(--green); font-weight:680; } .neg { color:var(--red); font-weight:680; }
-  table { width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--line); border-radius:12px; overflow:hidden; margin-top:18px; }
+  .split { display:grid; grid-template-columns: 1fr 320px; gap:18px; align-items:start; }
+  table { width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--line); border-radius:12px; overflow:hidden; }
   th { text-align:left; font-size:12px; color:#8b867d; font-weight:520; padding:12px; background:#f6f4ef; }
   td { padding:14px 12px; border-top:1px solid #eeeae3; } .name small { display:block; color:var(--muted); font-weight:420; }
   .bar { height:8px; background:#f0ebe3; border-radius:99px; display:flex; overflow:hidden; min-width:120px; } .bar i { display:block; height:100%; }
   button.link { border:0; background:none; padding:0; font:inherit; font-weight:750; cursor:pointer; color:#1c1b19; text-decoration:underline; }
+  .feed { background:#fff; border:1px solid #eeeae2; border-radius:14px; padding:14px; position:sticky; top:14px; }
+  .feed h2 { margin:0 0 8px; } .post { border-top:1px solid #eeeae3; padding:10px 0; }
+  .post time { display:block; color:#8a847a; font-size:12px; } .post p { margin:4px 0; line-height:1.45; font-size:14px; }
+  .post a { color:#335fd1; font-size:13px; text-decoration:none; }
   .mask { position:fixed; inset:0; background:rgba(22,21,19,.42); display:none; align-items:center; justify-content:center; padding:28px; z-index:20; }
   .mask.open { display:flex; }
   .modal { width:min(640px, 100%); max-height:84vh; overflow:auto; background:#f7f5f0; border-radius:20px; padding:22px 22px 18px; box-shadow:0 24px 60px rgba(28,27,25,.18); }
   .modal header { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
   .kicker { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:#8a847a; }
-  .modal h3 { font-family:Newsreader, serif; font-size:40px; line-height:.95; margin:4px 0 0; letter-spacing:-.03em; }
+  .modal h3 { font-family:Newsreader, serif; font-size:40px; line-height:.95; margin:4px 0 0; }
   .pill { display:inline-block; margin-top:8px; background:#e7f3ec; color:#1f8a4d; border-radius:999px; padding:4px 10px; font-size:12px; font-weight:650; }
   .pill.neg { background:#fbeeee; color:#c4473a; }
   .x { width:32px; height:32px; border:0; border-radius:50%; background:#fff; cursor:pointer; font-size:16px; }
@@ -42,15 +47,18 @@
   .item b { display:block; font-size:13px; } .item span { color:#8a847a; font-size:12px; }
   .item a { color:#335fd1; font-size:13px; text-decoration:none; } .item p { margin:4px 0 6px; line-height:1.45; }
   footer { color:var(--muted); font-size:12px; margin-top:16px; }
-  @media (max-width:980px) { .grid { grid-template-columns:1fr 1fr; } h1 { font-size:32px; } .item { grid-template-columns:1fr; } }
+  @media (max-width:980px) { .grid, .split { grid-template-columns:1fr; } h1 { font-size:32px; } .item { grid-template-columns:1fr; } }
 </style></head><body>
 <div class="page">
   <div class="tabs"><button data-r="theme" class="on">Themes 主題</button><button data-r="day">Daily 日</button><button data-r="week">Weekly 週</button><button data-r="month">Monthly 月</button></div>
   <div class="head"><h1 id="title">Monthly Consensus</h1><div class="range" id="range">Sample · 1 Oct 2026</div></div>
   <h2>Top bullish name in each theme</h2>
-  <p class="hint">點代號開時間軸。左邊日期，右邊判斷和原文。</p>
+  <p class="hint">點代號開時間軸。右邊是新貼文，每小時更新。</p>
   <div class="grid" id="cards"></div>
+  <div class="split">
   <table><thead><tr><th>Stock</th><th>Bull %</th><th>Position split</th><th>Bear %</th><th>Mentions</th><th>Bullish</th><th>Bearish</th><th>Neutral</th><th>Latest</th></tr></thead><tbody id="rows"></tbody></table>
+  <aside class="feed"><h2>新貼文</h2><p class="hint" id="feed-meta">每小時檢查。只列創作帖。</p><div id="feed"></div></aside>
+  </div>
   <footer>非投資建議。總結依公開文字整理，點連結才是原帖。</footer>
 </div>
 <div class="mask" id="mask"><div class="modal" id="modal"></div></div>
@@ -76,6 +84,12 @@ const POSTS = [
  {date:"2026-09-30",id:"2105151002760679706",theme:"Assembly",tags:[["AMZN","bull","Amazon","入股 PCB 廠，供應鏈地圖變完整。"],["AAOI","bull","Applied Optoelectronics","在它的光學曝險裡。"],["JBL","bull","Jabil","組裝端。"],["2368","bull","Gold Circuit","金像電，金額小但有戰略意義。"]]},
  {date:"2026-09-30",id:"2105377657043206492",theme:"Assembly",tags:[["JBL","bull","Jabil","財報好於市場反應，她當成買點。"]]},
  {date:"2026-09-30",id:"2105397070681248021",theme:"Models",tags:[["GOOGL","bull","Alphabet","內部模型看起來回來了。"],["MU","neut","Micron","當日說稍後再評，沒有新結論。"],["JBL","neut","Jabil","稍早已偏多，這則只是預告再評。"]]}
+];
+const FEED = [
+  {date:"2026-09-30 20:39",id:"2105397070681248021",text:"Gemini 4 Argon 出來了。她覺得 Google 回來了，MU 和 JBL 財報稍後再評。"},
+  {date:"2026-09-30 19:22",id:"2105377657043206492",text:"覺得 JBL 財報很好。市場反應不符，就當買點。"},
+  {date:"2026-09-30 04:21",id:"2105151002760679706",text:"Amazon 以 4,980 萬美元入股金像電。供應鏈持股地圖變完整。"},
+  {date:"2026-09-28 22:22",id:"2104698369591706069",text:"生病暫停。Nvidia 若鎖下 LITE Greensboro 一半產能，其他雷射廠戰略價值上升。"}
 ];
 const themes = ["Memory","Photonics","Neocloud","Materials","CPU"];
 const label = {bull:"多頭", bear:"空頭", neut:"中立"};
@@ -124,5 +138,7 @@ function render(){
 }
 document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => { mode=b.dataset.r; document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on", x===b)); render(); });
 document.getElementById("mask").onclick = e => { if (e.target.id==="mask") e.currentTarget.classList.remove("open"); };
+document.getElementById("feed").innerHTML = FEED.map(p => `<article class="post"><time>${p.date} UTC</time><p>${p.text}</p><a href="https://x.com/aleabitoreddit/status/${p.id}" target="_blank">原文 →</a></article>`).join("");
+document.getElementById("feed-meta").textContent = "上次檢查 2026-10-01 22:06 台北。每小時更新。只列創作帖。";
 render();
 </script></body></html>
