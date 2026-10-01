@@ -148,7 +148,7 @@
 <button class="ask-fab" id="ask-open" type="button">問紀錄</button>
 <aside class="ask" id="ask">
   <header><b>問紀錄</b><button type="button" id="ask-x">×</button></header>
-  <div class="ask-log" id="ask-log"></div>
+  <div class="ask-log" id="ask-log"><div class="bubble bot"><p>可以接著問。她的觀點以已收錄的帖為準，沒寫到的會說沒有。</p></div></div>
   <form id="ask-form"><input id="ask-q" placeholder="問一個代號，或問今天、哪些偏空" /><button type="submit">送出</button></form>
 </aside>
 <script>
@@ -497,17 +497,49 @@ function addBubble(html, who){
   log.scrollTop = log.scrollHeight;
   el.querySelectorAll("[data-t]").forEach(b => b.onclick = () => openTicker(b.dataset.t));
 }
-document.getElementById("ask-open").onclick = () => document.getElementById("ask").classList.add("open");
-document.getElementById("ask-x").onclick = () => document.getElementById("ask").classList.remove("open");
-document.getElementById("ask-form").onsubmit = e => {
-  e.preventDefault();
-  const input = document.getElementById("ask-q");
-  const q = input.value.trim();
-  if (!q) return;
-  addBubble(`<p>${esc(q)}</p>`, "user");
-  input.value = "";
-  addBubble(answerQuestion(q), "bot");
-};
-addBubble(`<p>只查已收錄的帖，沒寫到的不推測。</p><p class="en">Answers come only from the collected posts.</p>`, "bot");
+const askHistory = [];
+let asking = false;
+function plain(s){
+  const html = esc(s).replace(/\n{2,}/g, "</p><p>").replace(/\n/g, "<br>");
+  return `<p>${html.replace(/https:\/\/x\.com\/[^\s<]+/g, u => `<a href="${u}" target="_blank">原文</a>`)}</p>`;
+}
+if (!window.__askBound) {
+  window.__askBound = true;
+  document.addEventListener("click", (e) => {
+    const t = e.target;
+    if (t.closest && t.closest("#ask-open")) document.getElementById("ask").classList.add("open");
+    if (t.closest && t.closest("#ask-x")) document.getElementById("ask").classList.remove("open");
+  });
+  document.addEventListener("submit", async (e) => {
+    if (!e.target || e.target.id !== "ask-form") return;
+    e.preventDefault();
+    if (asking) return;
+    const input = document.getElementById("ask-q");
+    const q = input.value.trim();
+    if (!q) return;
+    addBubble(`<p>${esc(q)}</p>`, "user");
+    input.value = "";
+    askHistory.push({ role: "user", content: q });
+    if (askHistory.length > 8) askHistory.splice(0, askHistory.length - 8);
+    asking = true;
+    const pending = document.createElement("div");
+    pending.className = "bubble bot";
+    pending.innerHTML = "<p>查一下。</p>";
+    const log = document.getElementById("ask-log");
+    log.appendChild(pending);
+    log.scrollTop = log.scrollHeight;
+    try {
+      const res = await fetch("/api/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: askHistory }) });
+      const data = await res.json();
+      if (!res.ok || !data.text) throw new Error("fail");
+      askHistory.push({ role: "assistant", content: String(data.text).slice(0, 2000) });
+      pending.innerHTML = plain(data.text);
+    } catch (err) {
+      pending.innerHTML = answerQuestion(q);
+    }
+    asking = false;
+    log.scrollTop = log.scrollHeight;
+  });
+}
 render();
 </script></body></html>
