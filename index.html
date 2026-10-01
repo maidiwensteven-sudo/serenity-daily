@@ -40,7 +40,14 @@
   .en { color:#7a756c; font-size:13px; line-height:1.45; }
   .mask { position:fixed; inset:0; background:rgba(22,21,19,.42); display:none; align-items:center; justify-content:center; padding:28px; z-index:20; }
   .mask.open { display:flex; }
-  .shiftbar { background:#fff; border:1px solid #eeeae2; border-radius:14px; padding:12px 16px; margin:12px 0 4px; font-size:14px; line-height:1.55; }
+  .shiftbar { background:#fff; border:1px solid #eeeae2; border-radius:14px; padding:10px 16px; margin:12px 0 14px; }
+  .shiftrow { display:flex; gap:12px; align-items:baseline; padding:5px 0; }
+  .shiftrow .k { width:52px; flex:none; color:#8a847a; font-size:12px; }
+  .chips { display:flex; flex-wrap:wrap; gap:6px 14px; }
+  .chips small { color:#8a847a; font-size:12px; margin-left:4px; }
+  .score { display:flex; flex-wrap:wrap; gap:16px 22px; margin:14px 0 6px; padding:12px 0; border-top:1px solid #e6e1d6; border-bottom:1px solid #e6e1d6; }
+  .score b { display:block; font-size:18px; font-variant-numeric:tabular-nums; }
+  .score span { color:#8a847a; font-size:11px; }
   .modal h4 { margin:18px 0 6px; font-size:13px; }
   .modal { width:min(760px, 100%); max-height:84vh; overflow:auto; background:#f7f5f0; border-radius:20px; padding:22px; box-shadow:0 24px 60px rgba(28,27,25,.18); }
   .modal header { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
@@ -75,7 +82,6 @@
   <div class="head"><h1 id="title">Serenity Tracker</h1><div class="range" id="range"></div></div>
   <input id="q" placeholder="搜尋代號，例如 LITE、JBL" />
   <div class="shiftbar" id="shiftbar"></div>
-  <p class="hint">自首次是第一次明確說多或空之後的收盤，算到 2026-10-01。來源 Yahoo Finance 日收盤。GitHub 沒有股價 API。沒有這個來源的不填。</p>
   <section class="reports">
     <div class="tabs rtabs"><button type="button" data-rep="daily" class="on">日報 Daily</button><button type="button" data-rep="weekly">週報 Weekly</button></div>
     <article class="report" id="rep-daily">
@@ -351,12 +357,12 @@ function money(n){ return Number(n).toLocaleString("en-US", {minimumFractionDigi
 function signed(n){ return (n>0?"+":"") + Number(n).toFixed(1) + "%"; }
 function gainBlock(t){
   const g = GAIN[t];
-  if (!g) return `<p class="px">不計漲幅。沒有明確多空，或 Yahoo Finance 沒有這個代號。GitHub 沒有股價 API，這裡不估算。</p><p class="en">No return. There is no directional call, or Yahoo Finance has no listing. GitHub has no price API, so nothing is estimated.</p>`;
-  const d7 = g.d7 ? `7 日後 ${g.d7.date} 收盤 ${money(g.d7.px)}，${signed(g.d7.pct)}。` : "7 日尚未到期。";
-  const d30 = g.d30 ? `30 日後 ${g.d30.date} 收盤 ${money(g.d30.px)}，${signed(g.d30.pct)}。` : "30 日尚未到期。";
-  const d7e = g.d7 ? `Seven days later, ${g.d7.date} close ${money(g.d7.px)}, ${signed(g.d7.pct)}.` : "The 7-day window is not closed.";
-  const d30e = g.d30 ? `Thirty days later, ${g.d30.date} close ${money(g.d30.px)}, ${signed(g.d30.pct)}.` : "The 30-day window is not closed.";
-  return `<p class="px">首次明確多空 ${g.dir}。計價用 ${g.entryDate} 收盤 ${money(g.entry)}，到 ${g.latestDate} 收盤 ${money(g.latest)}，${signed(g.pct)}。${d7}${d30}來源：Yahoo Finance 日收盤。這是價格變化，不是她現在該不該持有。</p><p class="en">First directional call ${g.dir}. From the ${g.entryDate} close of ${money(g.entry)} to the ${g.latestDate} close of ${money(g.latest)}, ${signed(g.pct)}. ${d7e} ${d30e} Source: Yahoo Finance daily close. A price change, not a verdict on the current stance.</p>`;
+  if (!g) return "";
+  const cell = (val, label, cls) => `<div><b class="${cls||""}">${val}</b><span>${label}</span></div>`;
+  const tone = n => n>=0 ? "pos" : "neg";
+  const d7 = g.d7 ? cell(signed(g.d7.pct), "7日", tone(g.d7.pct)) : cell("—", "7日未到");
+  const d30 = g.d30 ? cell(signed(g.d30.pct), "30日", tone(g.d30.pct)) : cell("—", "30日未到");
+  return `<div class="score">${cell(signed(g.pct), "自首次", tone(g.pct))}${cell(money(g.entry), g.entryDate)}${cell(money(g.latest), g.latestDate)}${d7}${d30}</div>`;
 }
 function keyPosts(items){
   const keys = [];
@@ -415,11 +421,9 @@ function renderShifts(){
   const latestFlips = [];
   flips.sort((a,b) => a.date < b.date ? 1 : -1);
   flips.forEach(f => { if (seen.has(f.t)) return; seen.add(f.t); latestFlips.push(f); });
-  const btn = t => `<button class="link" data-t="${t}">${t}</button>`;
-  const born = Object.entries(first).filter(([,d]) => d==="2026-09-30").map(([t]) => btn(t)).join("、");
-  const flipHtml = latestFlips.map(f => `${btn(f.t)} ${f.date.slice(5)} ${zhStance(f.from)}→${zhStance(f.to)}`).join(" · ");
-  const flipEn = latestFlips.map(f => `${f.t} ${f.date.slice(5)} ${enStance(f.from)} to ${enStance(f.to)}`).join("; ");
-  document.getElementById("shiftbar").innerHTML = `<b>10 月 2 日沒有新代號。</b>最近一個有帖的交易日 9 月 30 日第一次出現：${born || "沒有"}。已收錄裡每檔最近一次改口：${flipHtml || "沒有"}。<p class="en">No new ticker on 2 Oct. First appearances on 30 Sep: ${Object.entries(first).filter(([,d]) => d==="2026-09-30").map(([t]) => t).join(", ") || "none"}. Latest recorded change: ${flipEn || "none"}.</p>`;
+  const born = Object.entries(first).filter(([,d]) => d==="2026-09-30").map(([t]) => `<button class="link" data-t="${t}">${t}</button>`).join("");
+  const flipHtml = latestFlips.map(f => `<span><button class="link" data-t="${f.t}">${f.t}</button><small>${f.date.slice(5)} ${zhStance(f.from).slice(0,1)}→${zhStance(f.to).slice(0,1)}</small></span>`).join("");
+  document.getElementById("shiftbar").innerHTML = `<div class="shiftrow"><span class="k">今日</span><span>沒有新代號</span></div><div class="shiftrow"><span class="k">新出現</span><span class="chips">${born || "沒有"}</span></div><div class="shiftrow"><span class="k">改口</span><span class="chips">${flipHtml || "沒有"}</span></div>`;
 }
 
 function render(){
