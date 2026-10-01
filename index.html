@@ -7,15 +7,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,560&family=Inter:wght@420;560;680&display=swap" rel="stylesheet" />
 <style>
   :root { --bg:#f3f1ea; --ink:#1c1b19; --muted:#7a756c; --line:#e6e1d6; --green:#1f8a4d; --red:#c4473a; --blue:#335fd1; }
-  * { box-sizing:border-box; }
-  body { margin:0; background:var(--bg); color:var(--ink); font-family:Inter, "PingFang TC", sans-serif; background-image:radial-gradient(#e4dfd4 1px, transparent 1px); background-size:18px 18px; }
+  * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--ink); font-family:Inter, "PingFang TC", sans-serif; background-image:radial-gradient(#e4dfd4 1px, transparent 1px); background-size:18px 18px; }
   .page { width:min(1180px, 94vw); margin:22px auto 48px; }
   .tabs { display:flex; gap:4px; background:#f7f5f0; border:1px solid #ece7dc; border-radius:12px; padding:6px; width:fit-content; }
   .tabs button { border:0; background:transparent; padding:8px 16px; border-radius:8px; font:inherit; color:#5e5a53; cursor:pointer; }
   .tabs button.on { background:#fff; color:var(--ink); border-bottom:2px solid var(--blue); }
   .head { display:flex; justify-content:space-between; align-items:flex-end; margin:22px 0 8px; }
-  h1 { font-family:Newsreader, serif; font-size:42px; margin:0; }
-  .range { color:var(--blue); font-weight:650; font-size:14px; }
+  h1 { font-family:Newsreader, serif; font-size:42px; margin:0; } .range { color:var(--blue); font-weight:650; font-size:14px; }
   h2 { font-size:18px; margin:22px 0 4px; } .hint { color:var(--muted); font-size:12px; margin:0 0 12px; }
   .grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
   .card { background:#fff; border:1px solid #eeeae2; border-radius:14px; padding:14px; min-height:132px; }
@@ -32,50 +30,46 @@
   .mask { position:fixed; inset:0; background:rgba(28,27,25,.35); display:none; align-items:center; justify-content:center; padding:24px; z-index:20; }
   .mask.open { display:flex; }
   .modal { width:min(720px, 100%); max-height:86vh; overflow:auto; background:#fbfaf7; border-radius:16px; padding:18px; }
-  .modal header { display:flex; justify-content:space-between; align-items:flex-start; }
-  .modal h3 { font-family:Newsreader, serif; font-size:32px; margin:0; }
-  .sum { background:#fff; border:1px solid #eeeae2; border-radius:12px; padding:12px 14px; margin:12px 0; line-height:1.5; }
-  .item { background:#fff; border:1px solid #eeeae2; border-radius:12px; padding:12px 14px; margin:8px 0; }
+  .modal header { display:flex; justify-content:space-between; align-items:flex-start; } .modal h3 { font-family:Newsreader, serif; font-size:32px; margin:0; }
+  .sum, .item { background:#fff; border:1px solid #eeeae2; border-radius:12px; padding:12px 14px; margin:8px 0; line-height:1.5; }
   .item b { display:block; margin-bottom:4px; } .item a { color:#335fd1; }
   footer { color:var(--muted); font-size:12px; margin-top:16px; }
   @media (max-width:980px) { .grid { grid-template-columns:1fr 1fr; } h1 { font-size:32px; } }
-</style>
-</head>
-<body>
+</style></head><body>
 <div class="page">
   <div class="tabs"><button data-r="theme" class="on">Themes 主題</button><button data-r="day">Daily 日</button><button data-r="week">Weekly 週</button><button data-r="month">Monthly 月</button></div>
   <div class="head"><h1 id="title">Monthly Consensus</h1><div class="range" id="range">Sample · 1 Oct 2026</div></div>
   <h2>Top bullish name in each theme</h2>
-  <p class="hint">點股票代號。視窗先給這檔總結，再按每一次提及列出日期、說明和原文連結。5 次就是 5 段。</p>
+  <p class="hint">五張卡是五個主題，不是同一檔。點代號開視窗。</p>
   <div class="grid" id="cards"></div>
   <table><thead><tr><th>Stock</th><th>Bull %</th><th>Position split</th><th>Bear %</th><th>Mentions</th><th>Bullish</th><th>Bearish</th><th>Neutral</th><th>Latest</th></tr></thead><tbody id="rows"></tbody></table>
-  <footer>非投資建議。總結是依公開文字整理，點連結才是她的原帖。她可能持有相關標的。</footer>
+  <footer>非投資建議。總結依公開文字整理，點連結才是原帖。</footer>
 </div>
 <div class="mask" id="mask"><div class="modal" id="modal"></div></div>
 <script>
 const POSTS = [
-  {date:"2025-11-17",id:"1990452960758042917",theme:"Neocloud",tags:[["NBIS","bull","Nebius","當時最純的 neocloud 不對稱，等的是執行。"],["IREN","bear","Iris Energy","全棧執行不確定，不當首選。"],["CRWV","bear","CoreWeave","高息債務，現金流被利息吃掉。"],["ORCL","bear","Oracle","合約依賴，不是同一種不對稱。"],["APLD","bear","Applied Digital","同樣被高息債務拖住。"]]},
-  {date:"2025-12-30",id:"2005918544924664315",theme:"Materials",tags:[["AXTI","bull","AXT","磷化鋰基板瓶頸，有定價權重估，也有地緣和稀釋風險。"],["COHR","neut","Coherent","美國產能不夠，還被上游原料卡住。"],["LITE","bull","Lumentum","下游會向上游鎖雷射料，LITE 在被鎖的一邊。"],["DOWA","bull","Dowa","原料控制方，瓶頸更上游。"]]},
-  {date:"2026-09-09",id:"2097660318369697875",theme:"Photonics",tags:[["LITE","bull","Lumentum","自 2025 就在講雷射，2027–28 光子週期會像記憶體。"],["AAOI","bull","Applied Optoelectronics","光模組同主題，需求大於供給。"],["SIVE","bull","Sivers","CW 雷射供應商，同一瓶頸。"],["COHR","bull","Coherent","雷射同主題，這次轉偏多。"],["GLW","bull","Corning","光纖，本人披露有曝險。"]]},
-  {date:"2026-09-14",id:"2099392042657038698",theme:"Memory",tags:[["005930","bull","Samsung","長約到 2031、約 2.8 倍，不該因跌 4% 就賣。"]]},
-  {date:"2026-09-15",id:"2099659874892386678",theme:"Memory",tags:[["SKHY","bull","SK Hynix","約 2.8–3 倍且有底價，中期偏多。"],["SNDK","bull","Sandisk","高現金流投影，拿來當對照。"],["DRAM","bull","Memory basket","短缺更緊，記憶體籃子偏多。"],["CRWD","bear","CrowdStrike","估值和增速不匹配。"],["CRWV","bear","CoreWeave","利息吃掉現金流，唯一明確不同意的倉。"],["INTC","bull","Intel","可做類似的中期多頭。"],["AMD","bull","AMD","可做類似的中期多頭。"]]},
-  {date:"2026-09-16",id:"2100290486569505223",theme:"Photonics",tags:[["LITE","bull","Lumentum","鴻海把 CW 雷射列成最大瓶頸，對上她的判斷。"],["COHR","bull","Coherent","同一瓶頸再確認。"],["SIVE","bull","Sivers","漲價 channel check，供應仍緊。"]]},
-  {date:"2026-09-21",id:"2101906175046635887",theme:"Memory",tags:[["EWY","bull","Korea memory","仍做多記憶體，用韓國籃子表達。"],["DRAM","bull","Memory basket","舊製程記憶體是漲價交易。"],["SKHY","bull","SK Hynix","記憶體主線，長約邏輯沒變。"],["PSMC","neut","Powerchip","只作研究線索，沒有下結論。"]]},
-  {date:"2026-09-21",id:"2102068786493026492",theme:"Materials",tags:[["AXTI","bull","AXT","若定價權上來，仍有重估空間。"]]},
-  {date:"2026-09-22",id:"2102247915251224980",theme:"CPU",tags:[["META","neut","Meta","產品超預期，不是直接叫進。"],["AMD","bull","AMD","CPU 需求強，供給跟不上。"],["INTC","bull","Intel","稱需求只能滿足約一半。"],["ARM","bull","Arm","同一 CPU 短缺主題。"],["NBIS","neut","Nebius","不確定這款產品是否用到。"]]},
-  {date:"2026-09-23",id:"2102763548715753927",theme:"Photonics",tags:[["LITE","bull","Lumentum","高功率雷射需求仍大於供給，NPO 大於 CPO。"],["SIVE","bull","Sivers","實質營收要到 2027–2028。"]]},
-  {date:"2026-09-23",id:"2102793298561970218",theme:"Themes",tags:[["ESMT","bull","Elite Semiconductor","近期新點子，舊製程記憶體漲價。"],["CCXI","bull","Humanoids","近期另一個新點子，人形機器人。"],["MU","bull","Micron","上半年已寫過，這時只是再點名。"],["AAOI","bull","Applied Optoelectronics","上半年已寫過，進入追蹤。"],["NBIS","bull","Nebius","上半年已寫過，仍在名單裡。"]]},
-  {date:"2026-09-24",id:"2103139052363133062",theme:"Neocloud",tags:[["NBIS","bull","Nebius","市場仍可能低估分部加總。"],["ORCL","bear","Oracle","專案延期被她當成保護，不是利多。"]]},
-  {date:"2026-09-24",id:"2103142451020267583",theme:"Humanoids",tags:[["CCXI","bull","Humanoids","仍持有，上市事件還沒發生。"]]},
-  {date:"2026-09-24",id:"2103144796110061704",theme:"Neocloud",tags:[["IREN","neut","Iris Energy","60 億美元增發走完前，看法轉中性。"],["NBIS","bull","Nebius","仍是 neocloud 對照組。"]]},
-  {date:"2026-09-24",id:"2103151990146801812",theme:"Photonics",tags:[["AAOI","neut","Applied Optoelectronics","2027 營運偏多，但無限增發讓股價難興奮。"],["SNDK","bull","Sandisk","拿來當機會成本。"],["IREN","bear","Iris Energy","同樣批評大額增發。"]]},
-  {date:"2026-09-24",id:"2103233602721132744",theme:"CPU",tags:[["AKAM","bear","Akamai","明確不買，受益不在簽單方。"],["AMD","bull","AMD","這張單的彈性更高。"],["MU","bull","Micron","記憶體先受益。"],["INTC","bull","Intel","CPU 先受益。"],["ARM","bull","Arm","CPU 同主題。"],["JBL","bull","Jabil","採購外溢到組裝。"],["SKHY","bull","SK Hynix","記憶體供應商。"]]},
-  {date:"2026-09-28",id:"2104698369591706069",theme:"Photonics",tags:[["LITE","bull","Lumentum","Nvidia 若鎖下 Greensboro 產能，LITE 戰略價值上升。"],["NVDA","neut","Nvidia","鎖料與回購，沒有直接買賣結論。"],["MRVL","bull","Marvell","基板是瓶頸，連帶偏多。"]]},
-  {date:"2026-09-30",id:"2105151002760679706",theme:"Assembly",tags:[["AMZN","bull","Amazon","入股 PCB 廠，供應鏈地圖變完整。"],["AAOI","bull","Applied Optoelectronics","在它的光學曝險裡。"],["JBL","bull","Jabil","組裝端。"],["2368","bull","Gold Circuit","金像電，金額小但有戰略意義。"]]},
-  {date:"2026-09-30",id:"2105377657043206492",theme:"Assembly",tags:[["JBL","bull","Jabil","財報好於市場反應，她當成買點。"]]},
-  {date:"2026-09-30",id:"2105397070681248021",theme:"Models",tags:[["GOOGL","bull","Alphabet","內部模型看起來回來了。"],["MU","neut","Micron","當日說稍後再評，沒有新結論。"],["JBL","neut","Jabil","稍早已偏多，這則只是預告再評。"]]}
+ {date:"2025-11-17",id:"1990452960758042917",theme:"Neocloud",tags:[["NBIS","bull","Nebius","當時最純的 neocloud 不對稱，等的是執行。"],["IREN","bear","Iris Energy","全棧執行不確定，不當首選。"],["CRWV","bear","CoreWeave","高息債務，現金流被利息吃掉。"],["ORCL","bear","Oracle","合約依賴，不是同一種不對稱。"],["APLD","bear","Applied Digital","同樣被高息債務拖住。"]]},
+ {date:"2025-12-30",id:"2005918544924664315",theme:"Materials",tags:[["AXTI","bull","AXT","磷化鋰基板瓶頸，有定價權重估，也有地緣和稀釋風險。"],["COHR","neut","Coherent","美國產能不夠，還被上游原料卡住。"],["LITE","bull","Lumentum","下游會向上游鎖雷射料，LITE 在被鎖的一邊。"],["DOWA","bull","Dowa","原料控制方，瓶頸更上游。"]]},
+ {date:"2026-09-09",id:"2097660318369697875",theme:"Photonics",tags:[["LITE","bull","Lumentum","自 2025 就在講雷射，2027–28 光子週期會像記憶體。"],["AAOI","bull","Applied Optoelectronics","光模組同主題，需求大於供給。"],["SIVE","bull","Sivers","CW 雷射供應商，同一瓶頸。"],["COHR","bull","Coherent","雷射同主題，這次轉偏多。"],["GLW","bull","Corning","光纖，本人披露有曝險。"]]},
+ {date:"2026-09-14",id:"2099392042657038698",theme:"Memory",tags:[["005930","bull","Samsung","長約到 2031、約 2.8 倍，不該因跌 4% 就賣。"]]},
+ {date:"2026-09-15",id:"2099659874892386678",theme:"Memory",tags:[["SKHY","bull","SK Hynix","約 2.8–3 倍且有底價，中期偏多。"],["SNDK","bull","Sandisk","高現金流投影，拿來當對照。"],["DRAM","bull","Memory basket","短缺更緊，記憶體籃子偏多。"],["CRWD","bear","CrowdStrike","估值和增速不匹配。"],["CRWV","bear","CoreWeave","利息吃掉現金流，唯一明確不同意的倉。"],["INTC","bull","Intel","可做類似的中期多頭。"],["AMD","bull","AMD","可做類似的中期多頭。"]]},
+ {date:"2026-09-16",id:"2100290486569505223",theme:"Photonics",tags:[["LITE","bull","Lumentum","鴻海把 CW 雷射列成最大瓶頸，對上她的判斷。"],["COHR","bull","Coherent","同一瓶頸再確認。"],["SIVE","bull","Sivers","漲價 channel check，供應仍緊。"]]},
+ {date:"2026-09-21",id:"2101906175046635887",theme:"Memory",tags:[["EWY","bull","Korea memory","仍做多記憶體，用韓國籃子表達。"],["DRAM","bull","Memory basket","舊製程記憶體是漲價交易。"],["SKHY","bull","SK Hynix","記憶體主線，長約邏輯沒變。"],["PSMC","neut","Powerchip","只作研究線索，沒有下結論。"]]},
+ {date:"2026-09-21",id:"2102068786493026492",theme:"Materials",tags:[["AXTI","bull","AXT","若定價權上來，仍有重估空間。"]]},
+ {date:"2026-09-22",id:"2102247915251224980",theme:"CPU",tags:[["META","neut","Meta","產品超預期，不是直接叫進。"],["AMD","bull","AMD","CPU 需求強，供給跟不上。"],["INTC","bull","Intel","稱需求只能滿足約一半。"],["ARM","bull","Arm","同一 CPU 短缺主題。"],["NBIS","neut","Nebius","不確定這款產品是否用到。"]]},
+ {date:"2026-09-23",id:"2102763548715753927",theme:"Photonics",tags:[["LITE","bull","Lumentum","高功率雷射需求仍大於供給，NPO 大於 CPO。"],["SIVE","bull","Sivers","實質營收要到 2027–2028。"]]},
+ {date:"2026-09-23",id:"2102793298561970218",theme:"Themes",tags:[["ESMT","bull","Elite Semiconductor","近期新點子，舊製程記憶體漲價。"],["CCXI","bull","Humanoids","近期另一個新點子，人形機器人。"],["MU","bull","Micron","上半年已寫過，這時只是再點名。"],["AAOI","bull","Applied Optoelectronics","上半年已寫過，進入追蹤。"],["NBIS","bull","Nebius","上半年已寫過，仍在名單裡。"]]},
+ {date:"2026-09-24",id:"2103139052363133062",theme:"Neocloud",tags:[["NBIS","bull","Nebius","市場仍可能低估分部加總。"],["ORCL","bear","Oracle","專案延期被她當成保護，不是利多。"]]},
+ {date:"2026-09-24",id:"2103142451020267583",theme:"Humanoids",tags:[["CCXI","bull","Humanoids","仍持有，上市事件還沒發生。"]]},
+ {date:"2026-09-24",id:"2103144796110061704",theme:"Neocloud",tags:[["IREN","neut","Iris Energy","60 億美元增發走完前，看法轉中性。"],["NBIS","bull","Nebius","仍是 neocloud 對照組。"]]},
+ {date:"2026-09-24",id:"2103151990146801812",theme:"Photonics",tags:[["AAOI","neut","Applied Optoelectronics","2027 營運偏多，但無限增發讓股價難興奮。"],["SNDK","bull","Sandisk","拿來當機會成本。"],["IREN","bear","Iris Energy","同樣批評大額增發。"]]},
+ {date:"2026-09-24",id:"2103233602721132744",theme:"CPU",tags:[["AKAM","bear","Akamai","明確不買，受益不在簽單方。"],["AMD","bull","AMD","這張單的彈性更高。"],["MU","bull","Micron","記憶體先受益。"],["INTC","bull","Intel","CPU 先受益。"],["ARM","bull","Arm","CPU 同主題。"],["JBL","bull","Jabil","採購外溢到組裝。"],["SKHY","bull","SK Hynix","記憶體供應商。"]]},
+ {date:"2026-09-28",id:"2104698369591706069",theme:"Photonics",tags:[["LITE","bull","Lumentum","Nvidia 若鎖下 Greensboro 產能，LITE 戰略價值上升。"],["NVDA","neut","Nvidia","鎖料與回購，沒有直接買賣結論。"],["MRVL","bull","Marvell","基板是瓶頸，連帶偏多。"]]},
+ {date:"2026-09-30",id:"2105151002760679706",theme:"Assembly",tags:[["AMZN","bull","Amazon","入股 PCB 廠，供應鏈地圖變完整。"],["AAOI","bull","Applied Optoelectronics","在它的光學曝險裡。"],["JBL","bull","Jabil","組裝端。"],["2368","bull","Gold Circuit","金像電，金額小但有戰略意義。"]]},
+ {date:"2026-09-30",id:"2105377657043206492",theme:"Assembly",tags:[["JBL","bull","Jabil","財報好於市場反應，她當成買點。"]]},
+ {date:"2026-09-30",id:"2105397070681248021",theme:"Models",tags:[["GOOGL","bull","Alphabet","內部模型看起來回來了。"],["MU","neut","Micron","當日說稍後再評，沒有新結論。"],["JBL","neut","Jabil","稍早已偏多，這則只是預告再評。"]]}
 ];
-const themes = ["Memory","Photonics","Neocloud","Materials","CPU","Humanoids","Assembly"];
+const themes = ["Memory","Photonics","Neocloud","Materials","CPU"];
 const label = {bull:"多頭", bear:"空頭", neut:"中立"};
 let mode = "theme", rows = [];
 function inRange(d){ if (mode==="theme" || mode==="month") return d >= "2026-09-01"; if (mode==="week") return d >= "2026-09-24"; return d === "2026-09-30"; }
@@ -89,7 +83,17 @@ function agg(){
   return Object.values(map).sort((a,b)=>b.items.length-a.items.length || b.bull-a.bull);
 }
 function cards(){
-  document.getElementById("cards").innerHTML = themes.map(th => rows.find(r => r.bull>0)).filter(Boolean).slice(0,5).map(x => `<article class="card"><div class="who"><div class="av">S</div><div>Serenity<small>@aleabitoreddit</small></div></div><div class="tick"><b><button class="link" data-t="${x.t}">${x.t}</button></b><span>${x.items.length} mentions</span></div><div class="meta"><span>Bull ${x.bull}</span><span class="pos">Long</span></div></article>`).join("");
+  const picks = themes.map(th => {
+    const map = {};
+    POSTS.filter(p => p.theme===th && (mode==="theme" || inRange(p.date))).forEach(p => p.tags.forEach(t => {
+      if (t[1]!=="bull") return;
+      if (!map[t[0]]) map[t[0]] = {t:t[0], n:0};
+      map[t[0]].n++;
+    }));
+    const hit = Object.values(map).sort((a,b)=>b.n-a.n)[0];
+    return hit ? {th, t:hit.t, n:hit.n} : null;
+  }).filter(Boolean);
+  document.getElementById("cards").innerHTML = picks.map(x => `<article class="card"><div class="who"><div class="av">${x.th.slice(0,1)}</div><div>${x.th}<small>@aleabitoreddit</small></div></div><div class="tick"><b><button class="link" data-t="${x.t}">${x.t}</button></b><span>${x.n} bullish</span></div><div class="meta"><span>這主題最多提及</span><span class="pos">Long</span></div></article>`).join("");
 }
 function table(){
   document.getElementById("rows").innerHTML = rows.map(r => {
@@ -113,6 +117,4 @@ function render(){
 document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => { mode=b.dataset.r; document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on", x===b)); render(); });
 document.getElementById("mask").onclick = e => { if (e.target.id==="mask") e.currentTarget.classList.remove("open"); };
 render();
-</script>
-</body>
-</html>
+</script></body></html>
