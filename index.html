@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Serenity Desk · 公開帖立場</title>
+<style>
+  :root { --ink:#17211c; --muted:#5e6a63; --line:#e4ebe6; --bg:#f6f7f4; --paper:#fff; --bull:#146c43; --bear:#a12626; --neut:#8a5a12; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family: "Avenir Next", "PingFang TC", "Noto Sans TC", sans-serif; }
+  a { color:#1d4e3a; }
+  .top { background:#13241c; color:#f4f7f5; padding:14px 6vw; display:flex; justify-content:space-between; align-items:center; }
+  .brand { font-weight:700; letter-spacing:.04em; }
+  .brand small { display:block; font-weight:400; color:#b7c7be; font-size:12px; letter-spacing:0; }
+  .wrap { width:min(1100px, 92vw); margin:0 auto; }
+  .hero { padding:28px 0 10px; }
+  h1 { font-size:40px; line-height:1.05; margin:0 0 8px; letter-spacing:-.03em; }
+  .lede { color:var(--muted); max-width:720px; line-height:1.55; }
+  .bar { display:flex; gap:8px; flex-wrap:wrap; margin:18px 0; }
+  button, select, input { font:inherit; border:1px solid var(--line); background:#fff; border-radius:999px; padding:8px 12px; }
+  button.on { background:#13241c; color:#fff; border-color:#13241c; }
+  .layout { display:grid; grid-template-columns: 1fr 300px; gap:22px; padding-bottom:48px; }
+  @media (max-width:860px) { .layout { grid-template-columns:1fr; } h1 { font-size:32px; } }
+  article { background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:16px 18px; margin-bottom:12px; }
+  .kicker { font-size:12px; color:var(--muted); display:flex; justify-content:space-between; }
+  h2 { font-size:18px; margin:8px 0; }
+  p { line-height:1.5; }
+  .tags { display:flex; gap:6px; flex-wrap:wrap; }
+  .tag { border:0; border-radius:999px; padding:4px 8px; font-size:12px; cursor:pointer; }
+  .bull { background:#e7f6ee; color:var(--bull); }
+  .bear { background:#fdecec; color:var(--bear); }
+  .neut { background:#fbf3e4; color:var(--neut); }
+  aside { background:#fff; border:1px solid var(--line); border-radius:16px; padding:14px; height:fit-content; position:sticky; top:12px; }
+  .day { font-size:13px; color:var(--muted); margin:18px 0 8px; }
+  .hist { border-top:1px solid var(--line); padding-top:8px; margin-top:8px; font-size:13px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">SERENITY DESK<small>@aleabitoreddit 公開帖 · 非投資建議</small></div>
+  <div>上次整理 2026-10-01 17:34 · 每日 08:15 台北時間更新</div>
+</header>
+<div class="wrap">
+  <section class="hero">
+    <h1>她公開講過的股票，按日排成一版。</h1>
+    <p class="lede">每則帖標多頭、空頭或中立，附原文。可切日、週、月、季。這是依文字判讀的樣本，不是完整封存，也不是買賣建議。她本人聲明可能持有相關標的。</p>
+    <div class="bar">
+      <button data-r="day" class="on">日</button>
+      <button data-r="week">週</button>
+      <button data-r="month">月</button>
+      <button data-r="quarter">季</button>
+      <select id="stance"><option value="all">全部</option><option value="bull">多頭</option><option value="bear">空頭</option><option value="neut">中立</option></select>
+      <input id="q" placeholder="搜尋代號" />
+    </div>
+  </section>
+  <div class="layout">
+    <section id="feed"></section>
+    <aside>
+      <strong id="side-title">點代號看變化</strong>
+      <div id="side"><p class="lede">右側會留下這檔在樣本裡的立場歷史。</p></div>
+    </aside>
+  </div>
+</div>
+<script>
+const POSTS = [
+  {date:"2025-11-17",id:"1990452960758042917",quote:"Nebius at $86.69 is the purest Neocloud and AI-infra asymmetry left.",note:"Neocloud 收斂到 NBIS。",tags:[["NBIS","bull","等執行的不對稱"],["IREN","bear","全棧執行不確定"],["CRWV","bear","高息債務"],["ORCL","bear","合約依賴"],["APLD","bear","高息債務"]]},
+  {date:"2025-12-30",id:"2005918544924664315",quote:"I do expect an immense bottleneck in 2026 in InP substrates and feedstock.",note:"關鍵材料博弈，TAM 可能低估。",tags:[["AXTI","bull","尾部重估，有地緣與稀釋風險"],["COHR","neut","產能不夠且被上游卡住"],["LITE","bull","下游會向上游鎖料"],["DOWA","bull","原料控制方"]]},
+  {date:"2026-09-09",id:"2097660318369697875",quote:"The 2027–2028 photonics supercycle will look a lot like memory did in 2025–2026.",note:"雷射與光纖被稱作下一個 HBM。",tags:[["LITE","bull","需求大於供給"],["AAOI","bull","光模組"],["SIVE","bull","CW 雷射"],["COHR","bull","同主題"],["GLW","bull","光纖，本人披露有曝險"]]},
+  {date:"2026-09-14",id:"2099392042657038698",quote:"Samsung LTAs to 2031, ~2.8× 2027E, and you sell a 4% drop?",note:"不因單日跌幅丟掉長約。",tags:[["005930","bull","Samsung 長約到 2031"]]},
+  {date:"2026-09-15",id:"2099659874892386678",quote:"Over the medium run it is hard not to see these positions pull an inverse Cramer.",note:"唯一不同意的 SA 倉是 CRWV。",tags:[["SKHY","bull","約 2.8–3 倍，有底價"],["SNDK","bull","高現金流投影"],["DRAM","bull","短缺更緊"],["CRWD","bear","估值與增速不匹配"],["CRWV","bear","利息吃掉現金流"],["INTC","bull","可做類似多頭"],["AMD","bull","可做類似多頭"]]},
+  {date:"2026-09-16",id:"2100290486569505223",quote:"Foxconn identifies CW lasers and fiber as the biggest photonics bottleneck.",note:"產業評論對上 2025 年的判斷。",tags:[["LITE","bull","瓶頸再確認"],["COHR","bull","同上"],["SIVE","bull","漲價 channel check"]]},
+  {date:"2026-09-21",id:"2101906175046635887",quote:"I'm still long memory. Legacy memory is an interesting ASP trade.",note:"小票不在 X 點名。",tags:[["EWY","bull","仍做多記憶體"],["DRAM","bull","同上"],["SKHY","bull","主線"],["PSMC","neut","只作研究線索"]]},
+  {date:"2026-09-21",id:"2102068786493026492",quote:"If AXTI gets more pricing control, there is room for a rerating.",note:"同時是中美談判棋子。",tags:[["AXTI","bull","定價權上來仍可重估"]]},
+  {date:"2026-09-22",id:"2102247915251224980",quote:"Intel can only support 50% of CPU demand.",note:"產品觀察，不是叫進。",tags:[["META","neut","產品超預期"],["AMD","bull","CPU 需求"],["INTC","bull","供給只夠一半"],["ARM","bull","同主題"],["NBIS","neut","不確定是否用到"]]},
+  {date:"2026-09-23",id:"2102763548715753927",quote:"UHP laser demand continues to exceed supply. NPO larger than CPO.",note:"ECOC 更新。",tags:[["LITE","bull","需求仍大於供給"],["SIVE","bull","2027–2028 才有實質營收"]]},
+  {date:"2026-09-23",id:"2102793298561970218",quote:"Only two recent ideas: ESMT for legacy memory and CCXI for humanoids.",note:"其餘進入驗證模式。",tags:[["ESMT","bull","新的 legacy 交易"],["CCXI","bull","人形機器人"],["MU","bull","H1 已寫"],["AAOI","bull","H1 已寫"],["NBIS","bull","H1 已寫"]]},
+  {date:"2026-09-24",id:"2103139052363133062",quote:"Markets may still underestimate Nebius sum-of-parts growth.",note:"回顧 2025 年的 NBIS 帖。",tags:[["NBIS","bull","仍低估分部加總"],["ORCL","bear","專案延期保護"]]},
+  {date:"2026-09-24",id:"2103142451020267583",quote:"I still have CCXI. Listing has not happened.",note:"上市前波動不當退出。",tags:[["CCXI","bull","仍持有"]]},
+  {date:"2026-09-24",id:"2103144796110061704",quote:"I would be more favorable on IREN after the $6B ATM is done.",note:"從避開改成等增發走完。",tags:[["IREN","neut","ATM 完成前中性"],["NBIS","bull","仍是對照組"]]},
+  {date:"2026-09-24",id:"2103151990146801812",quote:"AAOI is operationally bullish for 2027, but infinite ATMs are hard to like.",note:"營運與股價拆開。",tags:[["AAOI","neut","營運多、股價被增發壓住"],["SNDK","bull","拿來當機會成本"],["IREN","bear","同樣批評大額 ATM"]]},
+  {date:"2026-09-24",id:"2103233602721132744",quote:"Nope for AKAM. CPUs and memory first, then JBL procurement.",note:"受益記在供應鏈，不買簽單方。",tags:[["AKAM","bear","明確不買"],["AMD","bull","這張單的 beta 更高"],["MU","bull","記憶體受益"],["INTC","bull","CPU"],["ARM","bull","CPU"],["JBL","bull","採購外溢"],["SKHY","bull","記憶體"]]},
+  {date:"2026-09-28",id:"2104698369591706069",quote:"NVDA securing LITE laser capacity puts more value on other merchant laser suppliers.",note:"生病暫停。模型延期不當實質利空。",tags:[["LITE","bull","產能被鎖，戰略價值上升"],["NVDA","neut","鎖料與回購，無買賣結論"],["MRVL","bull","基板是瓶頸"]]},
+  {date:"2026-09-30",id:"2105151002760679706",quote:"Amazon placed $49.8M into a PCB maker and already has warrants across the stack.",note:"金額小，戰略意義大。",tags:[["AMZN","bull","供應鏈地圖變完整"],["AAOI","bull","在其光學曝險裡"],["JBL","bull","組裝"],["2368","bull","金像電，小額但戰略"]]},
+  {date:"2026-09-30",id:"2105377657043206492",quote:"JBL earnings were great. Disagreement with the market is a buying opportunity.",note:"市場反應不符就當買點。",tags:[["JBL","bull","財報好於股價反應"]]},
+  {date:"2026-09-30",id:"2105397070681248021",quote:"Looks like Google is back. MU and JBL earnings later.",note:"模型回到競爭，財報待評。",tags:[["GOOGL","bull","內部模型強"],["MU","neut","稍後再評"],["JBL","neut","當日稍早已偏多"]]}
+];
+const label={bull:"多頭",bear:"空頭",neut:"中立"};
+let range="day", active=null;
+const week=d=>{const t=new Date(d+"T00:00:00Z"); t.setUTCDate(t.getUTCDate()-((t.getUTCDay()+6)%7)); return t.toISOString().slice(0,10)+" 週";};
+const bucket=d=>range==="day"?d:range==="week"?week(d):range==="month"?d.slice(0,7):d.slice(0,4)+" Q"+(Math.floor((+d.slice(5,7)-1)/3)+1);
+function rows(){
+  const q=document.getElementById("q").value.trim().toUpperCase();
+  const st=document.getElementById("stance").value;
+  return POSTS.map(p=>({...p,tags:p.tags.filter(t=>(!q||t[0].includes(q))&&(st==="all"||t[1]===st))})).filter(p=>p.tags.length);
+}
+function render(){
+  const data=rows(); const g=new Map();
+  data.forEach(p=>{const k=bucket(p.date); if(!g.has(k)) g.set(k,[]); g.get(k).push(p);});
+  document.getElementById("feed").innerHTML=[...g.entries()].reverse().map(([k,items])=>`<div class="day">${k} · ${items.length} 則</div>`+items.slice().reverse().map(p=>`<article><div class="kicker"><span>${p.date}</span><a href="https://x.com/aleabitoreddit/status/${p.id}" target="_blank" rel="noopener">原文</a></div><h2>${p.quote}</h2><p>${p.note}</p><div class="tags">${p.tags.map(t=>`<button class="tag ${t[1]}" data-t="${t[0]}">${t[0]} · ${label[t[1]]}</button>`).join("")}</div></article>`).join("")).join("")||"<p>沒有對上的帖。</p>";
+  document.querySelectorAll(".tag").forEach(el=>el.onclick=()=>show(el.dataset.t));
+}
+function show(t){
+  active=t; document.getElementById("side-title").textContent=t;
+  document.getElementById("side").innerHTML=POSTS.flatMap(p=>p.tags.filter(x=>x[0]===t).map(x=>`<div class="hist"><b>${p.date}</b> · ${label[x[1]]}<br>${x[2]}<br><a href="https://x.com/aleabitoreddit/status/${p.id}" target="_blank" rel="noopener">原文</a></div>`)).join("");
+  render();
+}
+document.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{range=b.dataset.r; document.querySelectorAll("[data-r]").forEach(x=>x.classList.toggle("on",x===b)); render();});
+document.getElementById("stance").onchange=render;
+document.getElementById("q").oninput=render;
+render();
+</script>
+</body>
+</html>
