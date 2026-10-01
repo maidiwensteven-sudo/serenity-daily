@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Serenity Desk</title>
+<title>獨立筆記 · 公開貼文整理</title>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,560&family=Inter:wght@420;560;680&display=swap" rel="stylesheet" />
 <style>
   :root { --bg:#f3f1ea; --ink:#1c1b19; --muted:#7a756c; --line:#e6e1d6; --green:#1f8a4d; --red:#c4473a; --blue:#335fd1; }
@@ -32,6 +32,11 @@
   .feed h2 { margin:0 0 8px; } .post { border-top:1px solid #eeeae3; padding:12px 0; }
   .post time { display:block; color:#8a847a; font-size:12px; } .post p { margin:4px 0; line-height:1.5; font-size:14px; }
   .post a, .item a { color:#335fd1; font-size:13px; text-decoration:none; }
+  .banner, .note { background:#fff; border:1px solid #eeeae2; border-radius:12px; padding:12px 14px; margin:12px 0; line-height:1.5; }
+  .banner b { display:block; margin-bottom:4px; }
+  .note { color:#5e5a53; font-size:13px; }
+  #q { width:min(360px, 100%); border:1px solid #e6e1d6; border-radius:10px; padding:10px 12px; font:inherit; background:#fff; margin-bottom:8px; }
+  .px { margin-top:6px; font-size:12px; color:#6d675d; }
   .en { color:#7a756c; font-size:13px; line-height:1.45; }
   .mask { position:fixed; inset:0; background:rgba(22,21,19,.42); display:none; align-items:center; justify-content:center; padding:28px; z-index:20; }
   .mask.open { display:flex; }
@@ -50,6 +55,10 @@
   @media (max-width:980px) { .grid, .split, .item { grid-template-columns:1fr; } h1 { font-size:32px; } }
 </style></head><body>
 <div class="page">
+  <div class="banner"><b>獨立筆記，不是 Serenity 官方。</b> 整理自 @aleabitoreddit 公開貼文。不是她的產品，不是投資建議。她可能持有相關標的。這裡只放短摘和連結，不轉載全文。</div>
+  <div class="note">尚未完整收錄。2025 年 11 月以前、未點名的回覆，以及沒有抓到的舊帖，都算尚未收錄。表上的提及次數只計算已收錄樣本，不是她說過的全部。</div>
+  <div class="note" id="changelog">上次檢查 2026-10-01 22:30 台北。本次沒有新的原創研究帖。最新仍是 2026-09-30 20:39 UTC。</div>
+  <input id="q" placeholder="搜尋代號，例如 LITE、JBL" />
   <div class="tabs"><button data-r="theme" class="on">Themes 主題</button><button data-r="day">Daily 日</button><button data-r="week">Weekly 週</button><button data-r="month">Monthly 月</button></div>
   <div class="head"><h1 id="title">Monthly Consensus</h1><div class="range" id="range">Sample · 1 Oct 2026</div></div>
   <h2>Top bullish name in each theme</h2>
@@ -205,11 +214,22 @@ function table(){
     return `<tr><td class="name"><button class="link" data-t="${r.t}">${r.t}</button><small>${r.name}</small></td><td>${bp}%</td><td><div class="bar"><i style="width:${bp}%;background:#2f8f55"></i><i style="width:${sp}%;background:#c45a4a"></i></div></td><td>${sp}%</td><td><button class="link" data-t="${r.t}">${n}</button></td><td class="pos">${r.bull}</td><td class="neg">${r.bear}</td><td>${r.neut}</td><td>${r.last}</td></tr>`;
   }).join("");
 }
+
+const PX = {
+  "LITE|2026-09-09":"收盤 988.98。7 日後 919.40，-7.0%。30 日尚未到期。來源：Investing 收盤",
+  "LITE|2026-09-16":"收盤 919.40。7 日後 937.00，+1.9%。30 日尚未到期。來源：Investing 收盤",
+  "LITE|2026-09-23":"收盤 937.00。7 日後 971.26，+3.7%。30 日尚未到期。來源：Investing 收盤",
+  "LITE|2026-09-28":"收盤 921.32。7 日尚未滿。到 10 月 1 日收盤 1,035.91，不能算 7 日報酬。來源：Investing 收盤",
+  "JBL|2026-09-24":"收盤 310.69。7 日尚未結算。9 月 30 日收盤 286.86。來源：MarketWatch 收盤",
+  "JBL|2026-09-30":"收盤 286.86，當日 -10.0%。7 日、30 日都尚未到期。來源：MarketWatch 收盤",
+  "NBIS|2025-11-17":"帖內寫 86.69。這是她當下引用的價格，不是這裡核對的收盤。7 日、30 日未核對"
+};
+function priceLine(t, date){ return PX[t+"|"+date] || "提及價、7 日、30 日未核對。沒有來源就不填數字。"; }
 function openTicker(t){
   const r = rows.find(x => x.t===t); if (!r) return;
   const lead = r.bull>r.bear ? "整體偏多" : r.bear>r.bull ? "整體偏空" : "多空交錯";
   const leadEn = r.bull>r.bear ? "Net long" : r.bear>r.bull ? "Net short" : "Mixed";
-  document.getElementById("modal").innerHTML = `<header><div><div class="kicker">${r.name}</div><h3>${r.t}</h3><div class="pill ${r.bear>r.bull?"neg":""}">${lead} · ${r.items.length} 次</div></div><button class="x" id="close">×</button></header><p class="sum">${leadEn}. ${r.items.length} mentions, one note each. 每次提及一段，中文在上，英文在下。</p><div class="tl">` + r.items.slice().reverse().map(item=>`<div class="item"><div><b>${item.date.slice(5)}</b><span>${item.date.slice(0,4)} · ${label[item.stance]}</span></div><div>${bi(item.note)}<a href="https://x.com/aleabitoreddit/status/${item.id}" target="_blank">原文 Original →</a></div></div>`).join("") + `</div>`;
+  document.getElementById("modal").innerHTML = `<header><div><div class="kicker">${r.name}</div><h3>${r.t}</h3><div class="pill ${r.bear>r.bull?"neg":""}">${lead} · ${r.items.length} 次</div></div><button class="x" id="close">×</button></header><p class="sum">${leadEn}. ${r.items.length} mentions, one note each. 每次提及一段，中文在上，英文在下。</p><div class="tl">` + r.items.slice().reverse().map(item=>`<div class="item"><div><b>${item.date.slice(5)}</b><span>${item.date.slice(0,4)} · ${label[item.stance]}</span></div><div>${bi(item.note)}<p class="px">${priceLine(r.t, item.date)}</p><a href="https://x.com/aleabitoreddit/status/${item.id}" target="_blank">原文 Original →</a></div></div>`).join("") + `</div>`;
   document.getElementById("mask").classList.add("open");
   document.getElementById("close").onclick = () => document.getElementById("mask").classList.remove("open");
 }
@@ -219,6 +239,7 @@ function render(){
   rows = agg(); cards(); table();
   document.querySelectorAll("[data-t]").forEach(el => el.onclick = () => openTicker(el.dataset.t));
 }
+document.getElementById("q").oninput = () => { const q = document.getElementById("q").value.trim().toUpperCase(); document.querySelectorAll("#rows tr").forEach(tr => tr.style.display = !q || tr.innerText.toUpperCase().includes(q) ? "" : "none"); };
 document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => { mode=b.dataset.r; document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on", x===b)); render(); });
 document.getElementById("mask").onclick = e => { if (e.target.id==="mask") e.currentTarget.classList.remove("open"); };
 document.getElementById("feed").innerHTML = FEED.map(p => `<article class="post"><time>${p.date} UTC</time>${bi(p.text)}<a href="https://x.com/aleabitoreddit/status/${p.id}" target="_blank">原文 Original →</a></article>`).join("");
