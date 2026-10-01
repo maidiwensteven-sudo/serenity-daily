@@ -52,22 +52,28 @@
   .item { display:grid; grid-template-columns:108px 1fr; gap:14px; padding:14px 0; border-bottom:1px solid #ece7dc; }
   .item b { display:block; font-size:13px; } .item span { color:#8a847a; font-size:12px; }
   footer { color:var(--muted); font-size:12px; margin-top:16px; }
-  @media (max-width:980px) { .grid, .split, .item { grid-template-columns:1fr; } h1 { font-size:32px; } }
+  .mast { margin:0 0 16px; }
+  .mast .lead { margin:0; font-size:16px; font-weight:680; line-height:1.45; }
+  .method { margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.5; max-width:760px; }
+  .tablewrap { overflow-x:auto; border:1px solid var(--line); border-radius:12px; background:#fff; }
+  .tablewrap table { border:0; }
+  @media (max-width:980px) { .grid, .split, .item { grid-template-columns:1fr; } .head { flex-wrap:wrap; gap:6px; } .tabs { max-width:100%; } h1 { font-size:32px; } }
 </style></head><body>
 <div class="page">
+  <header class="mast"><p class="lead">獨立筆記。不是她的產品，不是投資建議。</p><p class="method">整理自 @aleabitoreddit 公開貼文，不是 Serenity 官方。只放短摘和原文連結，不轉載全文。價格沒有收盤來源就標未核對，不估算報酬。她可能持有相關標的。維護：Mai Diwen。</p></header>
   <div class="tabs"><button data-r="theme" class="on">Themes 主題</button><button data-r="day">Daily 日</button><button data-r="week">Weekly 週</button><button data-r="month">Monthly 月</button></div>
-  <div class="head"><h1 id="title">Monthly Consensus</h1><div class="range" id="range">Sample · 1 Oct 2026</div></div>
+  <div class="head"><h1 id="title">主題共識</h1><div class="range" id="range">2025-09-29 至 2026-09-30</div></div>
   <input id="q" placeholder="搜尋代號，例如 LITE、JBL" />
-  <h2>Top bullish name in each theme</h2>
-  <p class="hint">點代號看中英對照判斷。右邊新貼文每小時更新。</p>
+  <h2>各主題裡提及最多的多頭</h2>
+  <p class="hint">點代號看每次判斷、日期和原文。右欄是已收錄的原創帖，沒有新帖會直接寫沒有。</p>
   <div class="grid" id="cards"></div>
   <div class="split">
-  <table><thead><tr><th>Stock</th><th>Bull %</th><th>Position split</th><th>Bear %</th><th>Mentions</th><th>Bullish</th><th>Bearish</th><th>Neutral</th><th>Latest</th></tr></thead><tbody id="rows"></tbody></table>
+  <div class="tablewrap"><table><thead><tr><th>Stock</th><th>Bull %</th><th>Position split</th><th>Bear %</th><th>Mentions</th><th>Bullish</th><th>Bearish</th><th>Neutral</th><th>Latest</th></tr></thead><tbody id="rows"></tbody></table></div>
   <aside class="feed"><h2>新貼文</h2><p class="hint" id="feed-meta"></p><div id="feed"></div></aside>
   </div>
   <div class="banner"><b>獨立筆記，不是 Serenity 官方。</b> 整理自 @aleabitoreddit 公開貼文。不是她的產品，不是投資建議。她可能持有相關標的。這裡只放短摘和連結，不轉載全文。</div>
   <div class="note">收錄範圍從 2025 年 1 月起。1 月到 8 月沒有抓到原創研究帖，最早一則是 2025-09-29。回覆和沒有點名的帖仍未收錄，提及次數只算已收錄樣本。</div>
-  <div class="note" id="changelog">上次檢查 2026-10-01 22:30 台北。已補入 2025-09 至 2026-06 的研究帖。最新原創帖仍是 2026-09-30 20:39 UTC。</div>
+  <div class="note" id="changelog">上次檢查 2026-10-01 22:56 台北。這次沒有新的原創研究帖。最新仍是 2026-09-30 20:39 UTC。</div>
   
   
   <footer>非投資建議。中文是判斷摘要，英文是對照，點連結才是原帖。</footer>
@@ -284,9 +290,13 @@ const PX = {
   "LITE|2026-09-09":"收盤 988.98。7 日後 919.40，-7.0%。30 日尚未到期。來源：Investing 收盤",
   "LITE|2026-09-16":"收盤 919.40。7 日後 937.00，+1.9%。30 日尚未到期。來源：Investing 收盤",
   "LITE|2026-09-23":"收盤 937.00。7 日後 971.26，+3.7%。30 日尚未到期。來源：Investing 收盤",
-  "LITE|2026-09-28":"收盤 921.32。7 日尚未滿。到 10 月 1 日收盤 1,035.91，不能算 7 日報酬。來源：Investing 收盤",
-  "JBL|2026-09-24":"收盤 310.69。7 日尚未結算。9 月 30 日收盤 286.86。來源：MarketWatch 收盤",
+  "LITE|2026-09-28":"收盤 921.32。7 日尚未到期，不把盤中價當成 7 日報酬。來源：Investing 收盤",
+  "JBL|2026-09-24":"收盤 310.69。7 日尚未到期。來源：MarketWatch 收盤",
   "JBL|2026-09-30":"收盤 286.86，當日 -10.0%。7 日、30 日都尚未到期。來源：MarketWatch 收盤",
+  "NVDA|2026-09-28":"收盤 228.86。7 日、30 日尚未到期。來源：MarketWatch 收盤",
+  "MU|2026-09-23":"收盤 1,071.88。7 日後 1,065.11，-0.6%。30 日尚未到期。來源：MarketWatch 收盤",
+  "MU|2026-09-24":"收盤 1,080.53。7 日、30 日尚未到期。來源：MarketWatch 收盤",
+  "MU|2026-09-30":"收盤 1,065.11。7 日、30 日尚未到期。這則她只說稍後再評。來源：MarketWatch 收盤",
   "NBIS|2025-11-17":"帖內寫 86.69。這是她當下引用的價格，不是這裡核對的收盤。7 日、30 日未核對"
 };
 function priceLine(t, date){ return PX[t+"|"+date] || "提及價、7 日、30 日未核對。沒有來源就不填數字。"; }
@@ -299,8 +309,8 @@ function openTicker(t){
   document.getElementById("close").onclick = () => document.getElementById("mask").classList.remove("open");
 }
 function render(){
-  document.getElementById("title").textContent = {theme:"Theme Consensus",day:"Daily Stance",week:"Weekly Stance",month:"Monthly Consensus"}[mode];
-  document.getElementById("range").textContent = mode==="day" ? "30 Sep 2026" : mode==="week" ? "Week of 24 Sep" : "Sep 2026 sample";
+  document.getElementById("title").textContent = {theme:"主題共識",day:"當日立場",week:"本週立場",month:"本月立場"}[mode];
+  document.getElementById("range").textContent = mode==="day" ? "2026-09-30" : mode==="week" ? "2026-09-24 起" : "2025-09-29 至 2026-09-30";
   rows = agg(); cards(); table();
   document.querySelectorAll("[data-t]").forEach(el => el.onclick = () => openTicker(el.dataset.t));
 }
@@ -308,6 +318,6 @@ document.getElementById("q").oninput = () => { const q = document.getElementById
 document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => { mode=b.dataset.r; document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on", x===b)); render(); });
 document.getElementById("mask").onclick = e => { if (e.target.id==="mask") e.currentTarget.classList.remove("open"); };
 document.getElementById("feed").innerHTML = FEED.map(p => `<article class="post"><time>${p.date} UTC</time>${bi(p.text)}<a href="https://x.com/aleabitoreddit/status/${p.id}" target="_blank">原文 Original →</a></article>`).join("");
-document.getElementById("feed-meta").textContent = "上次檢查 2026-10-01 22:18 台北。每小時更新。中文在上，英文在下。";
+document.getElementById("feed-meta").textContent = "上次檢查 2026-10-01 22:56 台北。這次沒有新的原創帖。最新仍是 2026-09-30 20:39 UTC。";
 render();
 </script></body></html>
