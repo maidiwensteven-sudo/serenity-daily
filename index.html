@@ -22,19 +22,20 @@
   .tick { display:flex; justify-content:space-between; align-items:flex-end; margin-top:18px; } .tick b { font-size:22px; }
   .meta { display:flex; justify-content:space-between; margin-top:6px; font-size:12px; color:#8a847a; }
   .pos { color:var(--green); font-weight:680; } .neg { color:var(--red); font-weight:680; }
-  .split { display:grid; grid-template-columns: 1fr 320px; gap:18px; align-items:start; }
+  .split { display:grid; grid-template-columns: 1fr 340px; gap:18px; align-items:start; }
   table { width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--line); border-radius:12px; overflow:hidden; }
   th { text-align:left; font-size:12px; color:#8b867d; font-weight:520; padding:12px; background:#f6f4ef; }
   td { padding:14px 12px; border-top:1px solid #eeeae3; } .name small { display:block; color:var(--muted); font-weight:420; }
   .bar { height:8px; background:#f0ebe3; border-radius:99px; display:flex; overflow:hidden; min-width:120px; } .bar i { display:block; height:100%; }
   button.link { border:0; background:none; padding:0; font:inherit; font-weight:750; cursor:pointer; color:#1c1b19; text-decoration:underline; }
   .feed { background:#fff; border:1px solid #eeeae2; border-radius:14px; padding:14px; position:sticky; top:14px; }
-  .feed h2 { margin:0 0 8px; } .post { border-top:1px solid #eeeae3; padding:10px 0; }
-  .post time { display:block; color:#8a847a; font-size:12px; } .post p { margin:4px 0; line-height:1.45; font-size:14px; }
-  .post a { color:#335fd1; font-size:13px; text-decoration:none; }
+  .feed h2 { margin:0 0 8px; } .post { border-top:1px solid #eeeae3; padding:12px 0; }
+  .post time { display:block; color:#8a847a; font-size:12px; } .post p { margin:4px 0; line-height:1.5; font-size:14px; }
+  .post a, .item a { color:#335fd1; font-size:13px; text-decoration:none; }
+  .en { color:#7a756c; font-size:13px; line-height:1.45; }
   .mask { position:fixed; inset:0; background:rgba(22,21,19,.42); display:none; align-items:center; justify-content:center; padding:28px; z-index:20; }
   .mask.open { display:flex; }
-  .modal { width:min(640px, 100%); max-height:84vh; overflow:auto; background:#f7f5f0; border-radius:20px; padding:22px 22px 18px; box-shadow:0 24px 60px rgba(28,27,25,.18); }
+  .modal { width:min(680px, 100%); max-height:84vh; overflow:auto; background:#f7f5f0; border-radius:20px; padding:22px; box-shadow:0 24px 60px rgba(28,27,25,.18); }
   .modal header { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
   .kicker { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:#8a847a; }
   .modal h3 { font-family:Newsreader, serif; font-size:40px; line-height:.95; margin:4px 0 0; }
@@ -45,55 +46,136 @@
   .tl { margin-top:8px; border-top:1px solid #e6e1d6; }
   .item { display:grid; grid-template-columns:108px 1fr; gap:14px; padding:14px 0; border-bottom:1px solid #ece7dc; }
   .item b { display:block; font-size:13px; } .item span { color:#8a847a; font-size:12px; }
-  .item a { color:#335fd1; font-size:13px; text-decoration:none; } .item p { margin:4px 0 6px; line-height:1.45; }
   footer { color:var(--muted); font-size:12px; margin-top:16px; }
-  @media (max-width:980px) { .grid, .split { grid-template-columns:1fr; } h1 { font-size:32px; } .item { grid-template-columns:1fr; } }
+  @media (max-width:980px) { .grid, .split, .item { grid-template-columns:1fr; } h1 { font-size:32px; } }
 </style></head><body>
 <div class="page">
   <div class="tabs"><button data-r="theme" class="on">Themes 主題</button><button data-r="day">Daily 日</button><button data-r="week">Weekly 週</button><button data-r="month">Monthly 月</button></div>
   <div class="head"><h1 id="title">Monthly Consensus</h1><div class="range" id="range">Sample · 1 Oct 2026</div></div>
   <h2>Top bullish name in each theme</h2>
-  <p class="hint">點代號開時間軸。右邊是新貼文，每小時更新。</p>
+  <p class="hint">點代號看中英對照判斷。右邊新貼文每小時更新。</p>
   <div class="grid" id="cards"></div>
   <div class="split">
   <table><thead><tr><th>Stock</th><th>Bull %</th><th>Position split</th><th>Bear %</th><th>Mentions</th><th>Bullish</th><th>Bearish</th><th>Neutral</th><th>Latest</th></tr></thead><tbody id="rows"></tbody></table>
-  <aside class="feed"><h2>新貼文</h2><p class="hint" id="feed-meta">每小時檢查。只列創作帖。</p><div id="feed"></div></aside>
+  <aside class="feed"><h2>新貼文</h2><p class="hint" id="feed-meta"></p><div id="feed"></div></aside>
   </div>
-  <footer>非投資建議。總結依公開文字整理，點連結才是原帖。</footer>
+  <footer>非投資建議。中文是判斷摘要，英文是對照，點連結才是原帖。</footer>
 </div>
 <div class="mask" id="mask"><div class="modal" id="modal"></div></div>
 <script>
+const N = (zh,en) => zh + "||" + en;
 const POSTS = [
- {date:"2025-11-17",id:"1990452960758042917",theme:"Neocloud",tags:[["NBIS","bull","Nebius","當時最純的 neocloud 不對稱，等的是執行。"],["IREN","bear","Iris Energy","全棧執行不確定，不當首選。"],["CRWV","bear","CoreWeave","高息債務，現金流被利息吃掉。"],["ORCL","bear","Oracle","合約依賴，不是同一種不對稱。"],["APLD","bear","Applied Digital","同樣被高息債務拖住。"]]},
- {date:"2025-12-30",id:"2005918544924664315",theme:"Materials",tags:[["AXTI","bull","AXT","磷化鋰基板瓶頸，有定價權重估，也有地緣和稀釋風險。"],["COHR","neut","Coherent","美國產能不夠，還被上游原料卡住。"],["LITE","bull","Lumentum","下游會向上游鎖雷射料，LITE 在被鎖的一邊。"],["DOWA","bull","Dowa","原料控制方，瓶頸更上游。"]]},
- {date:"2026-09-09",id:"2097660318369697875",theme:"Photonics",tags:[["LITE","bull","Lumentum","自 2025 就在講雷射，2027–28 光子週期會像記憶體。"],["AAOI","bull","Applied Optoelectronics","光模組同主題，需求大於供給。"],["SIVE","bull","Sivers","CW 雷射供應商，同一瓶頸。"],["COHR","bull","Coherent","雷射同主題，這次轉偏多。"],["GLW","bull","Corning","光纖，本人披露有曝險。"]]},
- {date:"2026-09-14",id:"2099392042657038698",theme:"Memory",tags:[["005930","bull","Samsung","長約到 2031、約 2.8 倍，不該因跌 4% 就賣。"]]},
- {date:"2026-09-15",id:"2099659874892386678",theme:"Memory",tags:[["SKHY","bull","SK Hynix","約 2.8–3 倍且有底價，中期偏多。"],["SNDK","bull","Sandisk","高現金流投影，拿來當對照。"],["DRAM","bull","Memory basket","短缺更緊，記憶體籃子偏多。"],["CRWD","bear","CrowdStrike","估值和增速不匹配。"],["CRWV","bear","CoreWeave","利息吃掉現金流，唯一明確不同意的倉。"],["INTC","bull","Intel","可做類似的中期多頭。"],["AMD","bull","AMD","可做類似的中期多頭。"]]},
- {date:"2026-09-16",id:"2100290486569505223",theme:"Photonics",tags:[["LITE","bull","Lumentum","鴻海把 CW 雷射列成最大瓶頸，對上她的判斷。"],["COHR","bull","Coherent","同一瓶頸再確認。"],["SIVE","bull","Sivers","漲價 channel check，供應仍緊。"]]},
- {date:"2026-09-21",id:"2101906175046635887",theme:"Memory",tags:[["EWY","bull","Korea memory","仍做多記憶體，用韓國籃子表達。"],["DRAM","bull","Memory basket","舊製程記憶體是漲價交易。"],["SKHY","bull","SK Hynix","記憶體主線，長約邏輯沒變。"],["PSMC","neut","Powerchip","只作研究線索，沒有下結論。"]]},
- {date:"2026-09-21",id:"2102068786493026492",theme:"Materials",tags:[["AXTI","bull","AXT","若定價權上來，仍有重估空間。"]]},
- {date:"2026-09-22",id:"2102247915251224980",theme:"CPU",tags:[["META","neut","Meta","產品超預期，不是直接叫進。"],["AMD","bull","AMD","CPU 需求強，供給跟不上。"],["INTC","bull","Intel","稱需求只能滿足約一半。"],["ARM","bull","Arm","同一 CPU 短缺主題。"],["NBIS","neut","Nebius","不確定這款產品是否用到。"]]},
- {date:"2026-09-23",id:"2102763548715753927",theme:"Photonics",tags:[["LITE","bull","Lumentum","高功率雷射需求仍大於供給，NPO 大於 CPO。"],["SIVE","bull","Sivers","實質營收要到 2027–2028。"]]},
- {date:"2026-09-23",id:"2102793298561970218",theme:"Themes",tags:[["ESMT","bull","Elite Semiconductor","近期新點子，舊製程記憶體漲價。"],["CCXI","bull","Humanoids","近期另一個新點子，人形機器人。"],["MU","bull","Micron","上半年已寫過，這時只是再點名。"],["AAOI","bull","Applied Optoelectronics","上半年已寫過，進入追蹤。"],["NBIS","bull","Nebius","上半年已寫過，仍在名單裡。"]]},
- {date:"2026-09-24",id:"2103139052363133062",theme:"Neocloud",tags:[["NBIS","bull","Nebius","市場仍可能低估分部加總。"],["ORCL","bear","Oracle","專案延期被她當成保護，不是利多。"]]},
- {date:"2026-09-24",id:"2103142451020267583",theme:"Humanoids",tags:[["CCXI","bull","Humanoids","仍持有，上市事件還沒發生。"]]},
- {date:"2026-09-24",id:"2103144796110061704",theme:"Neocloud",tags:[["IREN","neut","Iris Energy","60 億美元增發走完前，看法轉中性。"],["NBIS","bull","Nebius","仍是 neocloud 對照組。"]]},
- {date:"2026-09-24",id:"2103151990146801812",theme:"Photonics",tags:[["AAOI","neut","Applied Optoelectronics","2027 營運偏多，但無限增發讓股價難興奮。"],["SNDK","bull","Sandisk","拿來當機會成本。"],["IREN","bear","Iris Energy","同樣批評大額增發。"]]},
- {date:"2026-09-24",id:"2103233602721132744",theme:"CPU",tags:[["AKAM","bear","Akamai","明確不買，受益不在簽單方。"],["AMD","bull","AMD","這張單的彈性更高。"],["MU","bull","Micron","記憶體先受益。"],["INTC","bull","Intel","CPU 先受益。"],["ARM","bull","Arm","CPU 同主題。"],["JBL","bull","Jabil","採購外溢到組裝。"],["SKHY","bull","SK Hynix","記憶體供應商。"]]},
- {date:"2026-09-28",id:"2104698369591706069",theme:"Photonics",tags:[["LITE","bull","Lumentum","Nvidia 若鎖下 Greensboro 產能，LITE 戰略價值上升。"],["NVDA","neut","Nvidia","鎖料與回購，沒有直接買賣結論。"],["MRVL","bull","Marvell","基板是瓶頸，連帶偏多。"]]},
- {date:"2026-09-30",id:"2105151002760679706",theme:"Assembly",tags:[["AMZN","bull","Amazon","入股 PCB 廠，供應鏈地圖變完整。"],["AAOI","bull","Applied Optoelectronics","在它的光學曝險裡。"],["JBL","bull","Jabil","組裝端。"],["2368","bull","Gold Circuit","金像電，金額小但有戰略意義。"]]},
- {date:"2026-09-30",id:"2105377657043206492",theme:"Assembly",tags:[["JBL","bull","Jabil","財報好於市場反應，她當成買點。"]]},
- {date:"2026-09-30",id:"2105397070681248021",theme:"Models",tags:[["GOOGL","bull","Alphabet","內部模型看起來回來了。"],["MU","neut","Micron","當日說稍後再評，沒有新結論。"],["JBL","neut","Jabil","稍早已偏多，這則只是預告再評。"]]}
+ {date:"2025-11-17",id:"1990452960758042917",theme:"Neocloud",tags:[
+  ["NBIS","bull","Nebius",N("她把 Nebius 當成當時最純的 neocloud 不對稱，認為賬在的不是短線財報，而是公司能不能把算力和客戶交付做出來。","She called Nebius the purest neocloud asymmetry left. The bet was execution, not the next print.")],
+  ["IREN","bear","Iris Energy",N("全棧模式的執行路徑不夠清楚，所以不當成 neocloud 的首選。她把不確定性放在空頭一邊。","Full-stack execution was too unclear, so she did not treat it as the preferred neocloud.")],
+  ["CRWV","bear","CoreWeave",N("高息債務讓現金流被利息吃掉，增長不等於股東能留下現金。這是她後來一直不同意的倉位。","High-cost debt consumes the cash flow. Growth does not automatically accrue to equity.")],
+  ["ORCL","bear","Oracle",N("合約依賴較重，不是她要的那種純算力不對稱。後來專案延期也被她當成保護，不是利多。","Contract dependence is not the same asymmetry. Later delays were treated as protection, not a positive.")],
+  ["APLD","bear","Applied Digital",N("同樣卡在高息債務，資產負債表不支持她要的不對稱。","The same debt constraint. The balance sheet did not support the asymmetry she wanted.")]
+ ]},
+ {date:"2025-12-30",id:"2005918544924664315",theme:"Materials",tags:[
+  ["AXTI","bull","AXT",N("這是磷化鋰基板和原料的瓶頸交易。若定價權上來有重估空間，但地緣和稀釋仍是明確風險。","A call on indium-phosphide substrates and feedstock. Pricing power can rerate it, with geopolitics and dilution still explicit risks.")],
+  ["COHR","neut","Coherent",N("美國產能不夠，而且還被上游原料卡住，所以這次沒有直接叫進。","US capacity was not enough and feedstock was still the constraint, so this mention stayed neutral.")],
+  ["LITE","bull","Lumentum",N("下游為了鎖雷射料，會向上游預訂產能。LITE 在被鎖的那一邊，不是可替代的通用供應商。","Downstream buyers will reserve laser capacity. LITE sits on the locked side of that bottleneck.")],
+  ["DOWA","bull","Dowa",N("瓶頸比基板更上游，原料控制方有議價權。","The bottleneck is further upstream. The feedstock owner has the bargaining position.")]
+ ]},
+ {date:"2026-09-09",id:"2097660318369697875",theme:"Photonics",tags:[
+  ["LITE","bull","Lumentum",N("她說自 2025 年就在跟雷射。2027–28 的光子週期會像 2025–26 的記憶體，缺貨而不是需求證偽。","She has been on lasers since 2025. The 2027–28 photonics cycle is framed like memory: shortage, not a demand fake-out.")],
+  ["AAOI","bull","Applied Optoelectronics",N("光模組跟雷射是同一條供不應求的鏈。這次把 AAOI 放進多頭組合。","Transceivers sit on the same undersupplied chain. AAOI was placed with the longs.")],
+  ["SIVE","bull","Sivers",N("CW 雷射供應商，受益於同一個瓶頸，不是單獨的主題股。","A CW-laser supplier on the same bottleneck, not a separate theme.")],
+  ["COHR","bull","Coherent",N("雷射同主題，這次從之前的中性轉偏多。","Same laser theme. This mention moved it from neutral to long.")],
+  ["GLW","bull","Corning",N("光纖是瓶頸的另一端，她也披露自己有曝險。","Fiber is the other end of the bottleneck. She also disclosed her own exposure.")]
+ ]},
+ {date:"2026-09-14",id:"2099392042657038698",theme:"Memory",tags:[["005930","bull","Samsung",N("長約拉到 2031，估值約 2.8 倍。跌 4% 不是賣出理由，她明確拒絕用短線回撤去評估長約。","LTAs to 2031 at about 2.8x. A 4% drop is not a reason to sell the contract.")]]},
+ {date:"2026-09-15",id:"2099659874892386678",theme:"Memory",tags:[
+  ["SKHY","bull","SK Hynix",N("約 2.8–3 倍且有底價約束，中期難以看空。短線波動她沒有下結論。","About 2.8–3x with floor pricing. Medium-term long; no short-term call.")],
+  ["SNDK","bull","Sandisk",N("用高現金流投影當對照，說明記憶體現金回報已經很高。","Used as the high-cash-flow comparison. The point is how large memory cash returns already look.")],
+  ["DRAM","bull","Memory basket",N("短缺比市場認知更緊，籃子本身偏多。","The shortage is tighter than the market is pricing. The basket itself is the long.")],
+  ["CRWD","bear","CrowdStrike",N("估值和增速不匹配，拿來對照記憶體的現金流交易。","Valuation does not match growth. It is the contrast to the memory cash-flow trade.")],
+  ["CRWV","bear","CoreWeave",N("利息吃掉現金流，是她明確說不同意的倉。","Interest consumes the cash flow. This is the position she explicitly disagreed with.")],
+  ["INTC","bull","Intel",N("CPU 短缺可以做類似的中期多頭，不是記憶體的替代。","CPU shortage can support a similar medium-term long. It is not a substitute for memory.")],
+  ["AMD","bull","AMD",N("同一個 CPU 供不應求的中期框架，可以跟記憶體並列。","Same medium-term CPU shortage frame, held alongside memory.")]
+ ]},
+ {date:"2026-09-16",id:"2100290486569505223",theme:"Photonics",tags:[
+  ["LITE","bull","Lumentum",N("鴻海互聯董事長把 CW 雷射和光纖列為最大瓶頸，對上她從 2025 年就在講的判斷。","Foxconn Interconnect's chairman named CW lasers and fiber as the bottleneck, matching her 2025 call.")],
+  ["COHR","bull","Coherent",N("同一次瓶頸確認，雷射供應仍然緊。","The same bottleneck check. Laser supply is still tight.")],
+  ["SIVE","bull","Sivers",N("漲價的 channel check 再次確認供應緊，不是單次訊號。","A price-increase channel check, not a one-off headline.")]
+ ]},
+ {date:"2026-09-21",id:"2101906175046635887",theme:"Memory",tags:[
+  ["EWY","bull","Korea memory",N("仍然做多記憶體，用韓國籃子表達，而不是單一公司。","Still long memory, expressed through the Korea basket rather than one name.")],
+  ["DRAM","bull","Memory basket",N("舊製程記憶體有漲價空間，是當時她覺得有趣的交易。","Legacy memory is the ASP-hike trade she found interesting.")],
+  ["SKHY","bull","SK Hynix",N("長約邏輯沒變，仍是記憶體主線。","The LTA logic is unchanged. It remains the core memory name.")],
+  ["PSMC","neut","Powerchip",N("只當研究線索，沒有給出買賣結論。","A research lead only. No long or short conclusion.")]
+ ]},
+ {date:"2026-09-21",id:"2102068786493026492",theme:"Materials",tags:[["AXTI","bull","AXT",N("當日漲超過 12%。若定價權繼續上來，她認為還有重估空間，不是已經走完。","It was up more than 12% that day. If pricing power sticks, she still sees rerating room.")]]},
+ {date:"2026-09-22",id:"2102247915251224980",theme:"CPU",tags:[
+  ["META","neut","Meta",N("產品超預期是觀察，不是直接的買進結論。","The product beat is an observation, not a direct buy call.")],
+  ["AMD","bull","AMD",N("CPU 需求強到供給跟不上，AMD 在受益的一邊。","CPU demand is ahead of supply. AMD is on the beneficiary side.")],
+  ["INTC","bull","Intel",N("Intel 總裁稱需求只能滿足約一半。這是供給約束，不是需求證偽。","Intel's CEO said they can serve only about half of demand. That is a supply constraint.")],
+  ["ARM","bull","Arm",N("同一個 CPU 短缺主題，放在多頭一邊。","Same CPU-shortage theme, on the long side.")],
+  ["NBIS","neut","Nebius",N("不確定這款產品會不會用到 Nebius，所以沒有新的買賣結論。","Unclear whether this product even uses Nebius, so no new call.")]
+ ]},
+ {date:"2026-09-23",id:"2102763548715753927",theme:"Photonics",tags:[
+  ["LITE","bull","Lumentum",N("高功率雷射需求仍大於供給，而且她把 NPO 看得比 CPO 更大。這是產能約束，不是單季訂單。","UHP laser demand still exceeds supply, and she sees NPO as larger than CPO. A capacity constraint, not a one-quarter order.")],
+  ["SIVE","bull","Sivers",N("主題沒變，但實質營收要到 2027–28 才會過來。","The theme is intact, but real revenue is a 2027–28 event.")]
+ ]},
+ {date:"2026-09-23",id:"2102793298561970218",theme:"Themes",tags:[
+  ["ESMT","bull","Elite Semiconductor",N("近期新點子，做的是舊製程記憶體漲價，不是 HBM 主線。","A newer idea: legacy-memory ASP hike, not the HBM core.")],
+  ["CCXI","bull","Humanoids",N("另一個近期新點子，人形機器人，上市事件還沒發生。","The other new idea, humanoids. The listing event had not happened yet.")],
+  ["MU","bull","Micron",N("上半年已寫過，這則只是再次點名，不是新的轉向。","Already written up earlier in the year. This is a reminder, not a new turn.")],
+  ["AAOI","bull","Applied Optoelectronics",N("上半年已經進入追蹤，這次再次放進光學名單。","Already on the tracking list. Reaffirmed inside the optics basket.")],
+  ["NBIS","bull","Nebius",N("上半年就在名單裡，這則沒有改判斷。","Already on the list. No change of view in this post.")]
+ ]},
+ {date:"2026-09-24",id:"2103139052363133062",theme:"Neocloud",tags:[
+  ["NBIS","bull","Nebius",N("即使核心業務 2027 後增長很快，她仍認為市場低估分部加總。","Even if the core business grows hard after 2027, she thinks sum-of-parts is still underpriced.")],
+  ["ORCL","bear","Oracle",N("專案延期被當成對 Nebius 的保護，不是 Oracle 自身的利多。","The delay is protection for the Nebius case, not a bullish read on Oracle.")]
+ ]},
+ {date:"2026-09-24",id:"2103142451020267583",theme:"Humanoids",tags:[["CCXI","bull","Humanoids",N("仍然持有。上市事件還沒發生，之前的波動對她沒有參考價值。","Still held. The listing has not happened, so the volatility before it does not change the position.")]]},
+ {date:"2026-09-24",id:"2103144796110061704",theme:"Neocloud",tags:[
+  ["IREN","neut","Iris Energy",N("60 億美元增發走完之前，看法從偏空轉成中性。稀釋本身就是問題。","Neutral until the $6B ATM is done. Dilution is the issue, not the demand story.")],
+  ["NBIS","bull","Nebius",N("仍是 neocloud 的對照組，沒有改口。","Still the neocloud reference name. No change.")]
+ ]},
+ {date:"2026-09-24",id:"2103151990146801812",theme:"Photonics",tags:[
+  ["AAOI","neut","Applied Optoelectronics",N("2027 年營運她仍偏多，但無限增發讓股價難以興奮。立場從多頭降到中性。","Operationally bullish for 2027, but repeated ATMs make the equity hard to own. Stance cut to neutral.")],
+  ["SNDK","bull","Sandisk",N("拿來當機會成本：同樣的資金放在現金流更清楚的記憶體。","The opportunity-cost comparison: the same capital has a cleaner cash-flow home in memory.")],
+  ["IREN","bear","Iris Energy",N("同樣批評大額增發，這則再次偏空。","The same objection to a large ATM. This mention is bearish again.")]
+ ]},
+ {date:"2026-09-24",id:"2103233602721132744",theme:"CPU",tags:[
+  ["AKAM","bear","Akamai",N("明確不買。這張單的受益不在簽單方，而在 CPU、記憶體和組裝。","Explicitly not a buy. The benefit is not at the contract signer; it is in CPU, memory and assembly.")],
+  ["AMD","bull","AMD",N("這張採購單的彈性更高，放在 CPU 受益組。","Higher operating leverage to the order. Placed with the CPU beneficiaries.")],
+  ["MU","bull","Micron",N("記憶體先受益，排在 CPU 之後、組裝之前。","Memory benefits first, after CPUs and before assembly.")],
+  ["INTC","bull","Intel",N("CPU 供應先吃到這張單，不是 Akamai。","CPU supply captures the order, not Akamai.")],
+  ["ARM","bull","Arm",N("CPU 同主題，一併列入多頭。","Same CPU theme, included with the longs.")],
+  ["JBL","bull","Jabil",N("採購會外溢到組裝與系統整合。JBL 是這條鏈的組裝端，不是晶片本身。","Procurement spills into assembly. JBL is the integration leg, not the chip.")],
+  ["SKHY","bull","SK Hynix",N("記憶體供應商，跟 Micron 一起排在受益順序前段。","A memory supplier, ranked with Micron ahead of the assemblers.")]
+ ]},
+ {date:"2026-09-28",id:"2104698369591706069",theme:"Photonics",tags:[
+  ["LITE","bull","Lumentum",N("若 Nvidia 鎖下 Greensboro 約一半高功率雷射產能，其餘商用雷射廠的戰略價值會上升，LITE 自身也更難替代。","If Nvidia locked about half of Greensboro UHP capacity, other merchant laser makers become more strategic, and LITE itself is harder to replace.")],
+  ["NVDA","neut","Nvidia",N("鎖料和回購是事實，這則沒有直接的買賣結論。","The capacity lock and buyback are facts. This post does not add a direct trade.")],
+  ["MRVL","bull","Marvell",N("大尺寸基板是其專案瓶頸之一，產能擴張對它偏多。","Large-body substrates are a cited bottleneck. Capacity expansion is a positive for the program.")]
+ ]},
+ {date:"2026-09-30",id:"2105151002760679706",theme:"Assembly",tags:[
+  ["AMZN","bull","Amazon",N("Amazon 以 4,980 萬美元入股金像電，持股地圖從光學、ASIC 伙伴拉到 PCB。金額小，戰略意義大於財務意義。","Amazon's $49.8M Gold Circuit stake extends the map from optics and ASIC partners to PCBs. Small financially, larger strategically.")],
+  ["AAOI","bull","Applied Optoelectronics",N("被放在 Amazon 的光學曝險裡，雷射這一段已經有持股關係。","Placed inside Amazon's optics exposure. The laser leg already has an ownership link.")],
+  ["JBL","bull","Jabil",N("組裝與系統整合是這張供應鏈地圖的一段，不是附帶提到。hyperscaler 資本開支會外溢到組裝，JBL 在這一端。","Assembly is a leg of the map, not a passing mention. Hyperscaler capex spills into integration, and JBL sits there.")],
+  ["2368","bull","Gold Circuit",N("金像電本次私募約佔公司 0.36%，金額對 Amazon 不大，但若供應 ASIC 伺服器 PCB，戰略位置比持股比例重要。","The placement is about 0.36% of the company. Small for Amazon; more important if it supplies ASIC-server PCBs.")]
+ ]},
+ {date:"2026-09-30",id:"2105377657043206492",theme:"Assembly",tags:[["JBL","bull","Jabil",N("她認為財報本身好於市場反應。價格沒跟上，被當成買點，而不是基本面轉差的證據。","She thought the print was better than the market reaction. The gap is the buying opportunity, not evidence the thesis broke.")]]},
+ {date:"2026-09-30",id:"2105397070681248021",theme:"Models",tags:[
+  ["GOOGL","bull","Alphabet",N("Gemini 4 Argon 對上 GPT-6 Astra 和 Anthropic 的新模型。她認為內部模型一直很強，公開後可能因算力被限制，這次看起來 Google 回來了。","Gemini 4 Argon against GPT-6 Astra and Anthropic's newer models. She has long thought the internal models were strong and may be compute-constrained after release; this read is that Google is back.")],
+  ["MU","neut","Micron",N("當日只說稍後再評財報，沒有新的多空結論。之前的記憶體偏多不因這則改寫。","She deferred the earnings comment. No new stance here; the earlier memory long is unchanged.")],
+  ["JBL","neut","Jabil",N("這則只是預告稍後再評財報，不是新的買賣。稍早她已把 JBL 放在偏多，所以這次標成中立。","This post only says she will comment later. It is not a new trade. She was already long JBL earlier, so this mention stays neutral.")]
+ ]}
 ];
 const FEED = [
-  {date:"2026-09-30 20:39",id:"2105397070681248021",text:"Gemini 4 Argon 出來了。她覺得 Google 回來了，MU 和 JBL 財報稍後再評。"},
-  {date:"2026-09-30 19:22",id:"2105377657043206492",text:"覺得 JBL 財報很好。市場反應不符，就當買點。"},
-  {date:"2026-09-30 04:21",id:"2105151002760679706",text:"Amazon 以 4,980 萬美元入股金像電。供應鏈持股地圖變完整。"},
-  {date:"2026-09-28 22:22",id:"2104698369591706069",text:"生病暫停。Nvidia 若鎖下 LITE Greensboro 一半產能，其他雷射廠戰略價值上升。"}
+ {date:"2026-09-30 20:39",id:"2105397070681248021",text:N("Gemini 4 Argon 的評測出來，對上 GPT-6 Astra 和 Anthropic 新模型。她認為 Google 內部模型一直很強，公開後可能因算力限制；這次的判斷是 Google 回來了。MU 和 JBL 財報她明講稍後再評，這則沒有新的買賣。","Gemini 4 Argon benchmarks landed against GPT-6 Astra and Anthropic's newer models. She thinks Google's internal models were always strong and may get compute-constrained after release; the call is that Google is back. MU and JBL earnings were deferred, so this post is not a new trade on them.")},
+ {date:"2026-09-30 19:22",id:"2105377657043206492",text:N("她認為 JBL 財報本身不錯，市場反應偏弱。價格沒跟上被當成買點，而不是組裝進零售邏輯出了問題。","She thought the JBL print was good and the market reaction was weak. The gap is the buying opportunity, not a break in the assembly thesis.")},
+ {date:"2026-09-30 04:21",id:"2105151002760679706",text:N("Amazon 以 4,980 萬美元入股 PCB 廠金像電，約佔 0.36%。她把這張地圖從光學、ASIC 伙伴拉到組裝和 PCB，金額小，但戰略上把供應鏈持股補齊。","Amazon put $49.8M into PCB maker Gold Circuit, about 0.36% of the company. She reads the map as optics, ASIC partners, assembly and now PCBs: small financially, larger as a supply-chain stake.")},
+ {date:"2026-09-28 22:22",id:"2104698369591706069",text:N("她因生病暫停更新，但仍寫了光子瓶頸。若 Nvidia 鎖下 LITE Greensboro 約一半高功率雷射產能，其他商用雷射廠的戰略價值會上升；同時也提到基板擴產和大規模回購。","She paused for illness, but the post is still the photonics bottleneck. If Nvidia locked about half of LITE Greensboro UHP capacity, other merchant laser makers become more strategic. She also noted substrate expansion and the large buyback.")}
 ];
 const themes = ["Memory","Photonics","Neocloud","Materials","CPU"];
-const label = {bull:"多頭", bear:"空頭", neut:"中立"};
+const label = {bull:"多頭 Long", bear:"空頭 Short", neut:"中立 Neutral"};
 let mode = "theme", rows = [];
+function bi(s){ const [zh,en] = String(s).split("||"); return `<p>${zh}</p>` + (en ? `<p class="en">${en}</p>` : ""); }
 function inRange(d){ if (mode==="theme" || mode==="month") return d >= "2026-09-01"; if (mode==="week") return d >= "2026-09-24"; return d === "2026-09-30"; }
 function agg(){
   const map = {};
@@ -126,7 +208,8 @@ function table(){
 function openTicker(t){
   const r = rows.find(x => x.t===t); if (!r) return;
   const lead = r.bull>r.bear ? "整體偏多" : r.bear>r.bull ? "整體偏空" : "多空交錯";
-  document.getElementById("modal").innerHTML = `<header><div><div class="kicker">${r.name}</div><h3>${r.t}</h3><div class="pill ${r.bear>r.bull?"neg":""}">${lead} · ${r.items.length} 次</div></div><button class="x" id="close">×</button></header><p class="sum">每次提及一段。先看她當時的判斷，再進原文。</p><div class="tl">` + r.items.slice().reverse().map(item=>`<div class="item"><div><b>${item.date.slice(5)}</b><span>${item.date.slice(0,4)} · ${label[item.stance]}</span></div><div><p>${item.note}</p><a href="https://x.com/aleabitoreddit/status/${item.id}" target="_blank">原文 →</a></div></div>`).join("") + `</div>`;
+  const leadEn = r.bull>r.bear ? "Net long" : r.bear>r.bull ? "Net short" : "Mixed";
+  document.getElementById("modal").innerHTML = `<header><div><div class="kicker">${r.name}</div><h3>${r.t}</h3><div class="pill ${r.bear>r.bull?"neg":""}">${lead} · ${r.items.length} 次</div></div><button class="x" id="close">×</button></header><p class="sum">${leadEn}. ${r.items.length} mentions, one note each. 每次提及一段，中文在上，英文在下。</p><div class="tl">` + r.items.slice().reverse().map(item=>`<div class="item"><div><b>${item.date.slice(5)}</b><span>${item.date.slice(0,4)} · ${label[item.stance]}</span></div><div>${bi(item.note)}<a href="https://x.com/aleabitoreddit/status/${item.id}" target="_blank">原文 Original →</a></div></div>`).join("") + `</div>`;
   document.getElementById("mask").classList.add("open");
   document.getElementById("close").onclick = () => document.getElementById("mask").classList.remove("open");
 }
@@ -138,7 +221,7 @@ function render(){
 }
 document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => { mode=b.dataset.r; document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on", x===b)); render(); });
 document.getElementById("mask").onclick = e => { if (e.target.id==="mask") e.currentTarget.classList.remove("open"); };
-document.getElementById("feed").innerHTML = FEED.map(p => `<article class="post"><time>${p.date} UTC</time><p>${p.text}</p><a href="https://x.com/aleabitoreddit/status/${p.id}" target="_blank">原文 →</a></article>`).join("");
-document.getElementById("feed-meta").textContent = "上次檢查 2026-10-01 22:06 台北。每小時更新。只列創作帖。";
+document.getElementById("feed").innerHTML = FEED.map(p => `<article class="post"><time>${p.date} UTC</time>${bi(p.text)}<a href="https://x.com/aleabitoreddit/status/${p.id}" target="_blank">原文 Original →</a></article>`).join("");
+document.getElementById("feed-meta").textContent = "上次檢查 2026-10-01 22:18 台北。每小時更新。中文在上，英文在下。";
 render();
 </script></body></html>
