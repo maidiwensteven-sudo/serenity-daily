@@ -69,7 +69,7 @@
   .reports { margin:14px 0 8px; }
   .rtabs { margin-bottom:10px; }
   .report { background:#fff; border:1px solid #eeeae2; border-radius:14px; padding:16px 18px 8px; }
-  .report.hide { display:none; }
+  .report.hide, .only-home.hide { display:none; }
   .report h2 { font-family:Newsreader, serif; font-size:28px; margin:0; }
   .when { color:var(--muted); font-size:12px; margin:4px 0 10px; }
   .report h3 { font-size:14px; margin:14px 0 4px; }
@@ -78,11 +78,11 @@
   @media (max-width:980px) { .grid, .split, .item { grid-template-columns:1fr; } .head { flex-direction:column; align-items:flex-start; gap:6px; } .tabs { max-width:100%; } h1 { font-size:28px; } #q { width:100%; } }
 </style></head><body>
 <div class="page">
-  <div class="tabs stance"><button data-r="theme" class="on">Themes 主題</button><button data-r="day">Daily 日</button><button data-r="week">Weekly 週</button><button data-r="month">Monthly 月</button></div>
+  <div class="tabs stance"><button data-r="theme" class="on">Overview 總覽</button><button data-r="day">Daily 日</button><button data-r="week">Weekly 週</button><button data-r="month">Monthly 月</button></div>
   <div class="head"><h1 id="title">Serenity Tracker</h1><div class="range" id="range"></div></div>
   <input id="q" placeholder="搜尋代號，例如 LITE、JBL" />
-  <div class="shiftbar" id="shiftbar"></div>
-  <section class="reports">
+  <div class="shiftbar only-home" id="shiftbar"></div>
+  <section class="reports only-home">
     <div class="tabs rtabs"><button type="button" data-rep="daily" class="on">日報 Daily</button><button type="button" data-rep="weekly">週報 Weekly</button></div>
     <article class="report" id="rep-daily">
       <h2>10 月 2 日沒有新帖</h2>
@@ -551,7 +551,10 @@ function renderShifts(){
 function render(){
   document.getElementById("title").textContent = {theme:"Serenity Tracker",day:"當日立場",week:"本週立場",month:"本月立場"}[mode];
   document.getElementById("range").textContent = mode==="day" ? "2026-09-30" : mode==="week" ? "2026-09-24 起" : "";
-  rows = agg(); cards(); table(); renderShifts();
+  rows = agg(); cards(); table();
+  const home = mode==="theme";
+  document.querySelectorAll(".only-home").forEach(el => el.classList.toggle("hide", !home));
+  if (home) renderShifts();
   document.querySelectorAll("[data-t]").forEach(el => el.onclick = () => openTicker(el.dataset.t));
 }
 document.getElementById("q").oninput = () => { const q = document.getElementById("q").value.trim().toUpperCase(); document.querySelectorAll("#rows tr").forEach(tr => tr.style.display = !q || tr.innerText.toUpperCase().includes(q) ? "" : "none"); };
