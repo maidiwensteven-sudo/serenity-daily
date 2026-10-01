@@ -4,41 +4,39 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Serenity Desk</title>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,560;6..72,650&family=Inter:wght@420;520;640&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,560&family=Inter:wght@420;560;680&display=swap" rel="stylesheet" />
 <style>
   :root { --bg:#f3f1ea; --ink:#1c1b19; --muted:#7a756c; --line:#e6e1d6; --green:#1f8a4d; --red:#c4473a; --blue:#335fd1; }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--ink); font-family:Inter, "PingFang TC", sans-serif; background-image:radial-gradient(#e4dfd4 1px, transparent 1px); background-size:18px 18px; }
-  .page { width:min(1180px, 94vw); margin:22px auto 40px; }
+  .page { width:min(1180px, 94vw); margin:22px auto 48px; }
   .tabs { display:flex; gap:4px; background:#f7f5f0; border:1px solid #ece7dc; border-radius:12px; padding:6px; width:fit-content; }
   .tabs button { border:0; background:transparent; padding:8px 16px; border-radius:8px; font:inherit; color:#5e5a53; cursor:pointer; }
-  .tabs button.on { background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.04); border-bottom:2px solid var(--blue); }
-  .head { display:flex; justify-content:space-between; align-items:flex-end; gap:16px; margin:22px 0 8px; }
-  h1 { font-family:Newsreader, serif; font-size:42px; margin:0; letter-spacing:-.03em; }
-  .range { color:var(--blue); font-weight:620; font-size:14px; }
-  h2 { font-size:18px; margin:22px 0 4px; }
-  .hint { color:var(--muted); font-size:12px; margin:0 0 12px; }
-  .grid { display:grid; grid-template-columns:repeat(5, 1fr); gap:12px; }
+  .tabs button.on { background:#fff; color:var(--ink); border-bottom:2px solid var(--blue); }
+  .head { display:flex; justify-content:space-between; align-items:flex-end; margin:22px 0 8px; }
+  h1 { font-family:Newsreader, serif; font-size:42px; margin:0; }
+  .range { color:var(--blue); font-weight:650; font-size:14px; }
+  h2 { font-size:18px; margin:22px 0 4px; } .hint { color:var(--muted); font-size:12px; margin:0 0 12px; }
+  .grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
   .card { background:#fff; border:1px solid #eeeae2; border-radius:14px; padding:14px; min-height:132px; }
-  .who { display:flex; gap:8px; align-items:center; font-size:13px; }
-  .av { width:28px; height:28px; border-radius:50%; background:#ece7dc; display:grid; place-items:center; font-size:11px; color:#6d675d; }
-  .who small { display:block; color:var(--muted); }
-  .tick { display:flex; justify-content:space-between; align-items:flex-end; margin-top:18px; }
-  .tick b { font-size:22px; letter-spacing:-.03em; }
+  .who { display:flex; gap:8px; align-items:center; font-size:13px; } .who small { display:block; color:var(--muted); }
+  .av { width:28px; height:28px; border-radius:50%; background:#ece7dc; display:grid; place-items:center; font-size:11px; }
+  .tick { display:flex; justify-content:space-between; align-items:flex-end; margin-top:18px; } .tick b { font-size:22px; }
   .meta { display:flex; justify-content:space-between; margin-top:6px; font-size:12px; color:#8a847a; }
-  .pos { color:var(--green); font-weight:640; } .neg { color:var(--red); font-weight:640; }
-  table { width:100%; border-collapse:collapse; background:#fbfaf7; border:1px solid var(--line); border-radius:12px; overflow:hidden; margin-top:18px; }
-  th { text-align:left; font-size:12px; color:#8b867d; font-weight:520; padding:12px; background:#f6f4ef; border-bottom:1px solid var(--line); }
-  td { padding:14px 12px; border-bottom:1px solid #eeeae3; vertical-align:middle; background:#fff; }
-  .name small { display:block; color:var(--muted); font-size:12px; }
-  .bar { height:8px; background:#f0ebe3; border-radius:99px; display:flex; overflow:hidden; min-width:140px; }
-  .bar i { display:block; height:100%; }
-  .split { font-size:12px; margin-top:6px; }
-  .dot { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:4px; }
-  a, button.link { color:#1c1b19; font-weight:700; background:none; border:0; padding:0; font:inherit; cursor:pointer; text-decoration:underline; }
-  #drawer { display:none; margin-top:16px; } #drawer.open { display:block; }
-  #drawer article { background:#fff; border:1px solid #eeeae2; border-radius:14px; padding:14px 16px; margin:10px 0; }
-  #drawer h3 { margin:0 0 6px; font-size:14px; } #drawer p { margin:0; line-height:1.5; }
+  .pos { color:var(--green); font-weight:680; } .neg { color:var(--red); font-weight:680; }
+  table { width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--line); border-radius:12px; overflow:hidden; margin-top:18px; }
+  th { text-align:left; font-size:12px; color:#8b867d; font-weight:520; padding:12px; background:#f6f4ef; }
+  td { padding:14px 12px; border-top:1px solid #eeeae3; } .name small { display:block; color:var(--muted); font-weight:420; }
+  .bar { height:8px; background:#f0ebe3; border-radius:99px; display:flex; overflow:hidden; min-width:120px; } .bar i { display:block; height:100%; }
+  button.link { border:0; background:none; padding:0; font:inherit; font-weight:750; cursor:pointer; color:#1c1b19; text-decoration:underline; }
+  .mask { position:fixed; inset:0; background:rgba(28,27,25,.35); display:none; align-items:center; justify-content:center; padding:24px; z-index:20; }
+  .mask.open { display:flex; }
+  .modal { width:min(720px, 100%); max-height:86vh; overflow:auto; background:#fbfaf7; border-radius:16px; padding:18px; }
+  .modal header { display:flex; justify-content:space-between; align-items:flex-start; }
+  .modal h3 { font-family:Newsreader, serif; font-size:32px; margin:0; }
+  .sum { background:#fff; border:1px solid #eeeae2; border-radius:12px; padding:12px 14px; margin:12px 0; line-height:1.5; }
+  .item { background:#fff; border:1px solid #eeeae2; border-radius:12px; padding:12px 14px; margin:8px 0; }
+  .item b { display:block; margin-bottom:4px; } .item a { color:#335fd1; }
   footer { color:var(--muted); font-size:12px; margin-top:16px; }
   @media (max-width:980px) { .grid { grid-template-columns:1fr 1fr; } h1 { font-size:32px; } }
 </style>
@@ -46,80 +44,74 @@
 <body>
 <div class="page">
   <div class="tabs"><button data-r="theme" class="on">Themes 主題</button><button data-r="day">Daily 日</button><button data-r="week">Weekly 週</button><button data-r="month">Monthly 月</button></div>
-  <div class="head"><h1 id="title">Monthly Consensus</h1><div class="range" id="range">Sample · through 1 Oct 2026</div></div>
+  <div class="head"><h1 id="title">Monthly Consensus</h1><div class="range" id="range">Sample · 1 Oct 2026</div></div>
   <h2>Top bullish name in each theme</h2>
-  <p class="hint">點股票代號或提及次數，展開該檔每一次提及的原文。次數與原文則數一樣。</p>
+  <p class="hint">點股票代號。視窗先給這檔總結，再按每一次提及列出日期、說明和原文連結。5 次就是 5 段。</p>
   <div class="grid" id="cards"></div>
   <table><thead><tr><th>Stock</th><th>Bull %</th><th>Position split</th><th>Bear %</th><th>Mentions</th><th>Bullish</th><th>Bearish</th><th>Neutral</th><th>Latest</th></tr></thead><tbody id="rows"></tbody></table>
-  <div id="drawer"></div>
-  <footer>非投資建議。摘錄不是全文，點日期進她的帖。她可能持有相關標的。</footer>
+  <footer>非投資建議。總結是依公開文字整理，點連結才是她的原帖。她可能持有相關標的。</footer>
 </div>
+<div class="mask" id="mask"><div class="modal" id="modal"></div></div>
 <script>
 const POSTS = [
-  {date:"2025-11-17",id:"1990452960758042917",theme:"Neocloud",quote:"Nebius at $86.69 is the purest Neocloud and AI-infra asymmetry left. You are simply just waiting for company execution.",tags:[["NBIS","bull","Nebius"],["IREN","bear","Iris Energy"],["CRWV","bear","CoreWeave"],["ORCL","bear","Oracle"],["APLD","bear","Applied Digital"]]},
-  {date:"2025-12-30",id:"2005918544924664315",theme:"Materials",quote:"This is a call on critical materials game theory. I do expect an immense bottleneck in 2026 in both InP substrates and InP feedstock.",tags:[["AXTI","bull","AXT"],["COHR","neut","Coherent"],["LITE","bull","Lumentum"],["DOWA","bull","Dowa"]]},
-  {date:"2026-09-09",id:"2097660318369697875",theme:"Photonics",quote:"I've been talking about lasers like $LITE / $AAOI since 2025. The 2027-2028 photonics supercycle will look a lot like memory did in 2025-2026.",tags:[["LITE","bull","Lumentum"],["AAOI","bull","Applied Optoelectronics"],["SIVE","bull","Sivers"],["COHR","bull","Coherent"],["GLW","bull","Corning"]]},
-  {date:"2026-09-14",id:"2099392042657038698",theme:"Memory",quote:"Samsung has memory LTAs extending to 2031? And it's trading at ~2.8x 2027E P/E? So you're buying Samsung? No, I'm selling on a 4% drop.",tags:[["005930","bull","Samsung"]]},
-  {date:"2026-09-15",id:"2099659874892386678",theme:"Memory",quote:"Not quite sure about short-term, but over the medium run it's hard to not see Leopold's positions pulling an Inverse Cramer.",tags:[["SKHY","bull","SK Hynix"],["SNDK","bull","Sandisk"],["DRAM","bull","Memory basket"],["CRWD","bear","CrowdStrike"],["CRWV","bear","CoreWeave"],["INTC","bull","Intel"],["AMD","bull","AMD"]]},
-  {date:"2026-09-16",id:"2100290486569505223",theme:"Photonics",quote:"Foxconn Interconnect Chairman identifies CW lasers and fiber as the biggest bottleneck in photonics.",tags:[["LITE","bull","Lumentum"],["COHR","bull","Coherent"],["SIVE","bull","Sivers"]]},
-  {date:"2026-09-21",id:"2101906175046635887",theme:"Memory",quote:"I'm still long memory (eg. $EWY / $DRAM). Legacy memory is a very interesting trade currently due to ASP hike potential.",tags:[["EWY","bull","Korea memory"],["DRAM","bull","Memory basket"],["SKHY","bull","SK Hynix"],["PSMC","neut","Powerchip"]]},
-  {date:"2026-09-21",id:"2102068786493026492",theme:"Materials",quote:"Glad $AXTI also went up +12.4% today. If they have more control over pricing, I do think there's a lot of room for rerating.",tags:[["AXTI","bull","AXT"]]},
-  {date:"2026-09-22",id:"2102247915251224980",theme:"CPU",quote:"Intel CEO also said recently that CPU demand is so strong they can only support 50% of what customers need.",tags:[["META","neut","Meta"],["AMD","bull","AMD"],["INTC","bull","Intel"],["ARM","bull","Arm"],["NBIS","neut","Nebius"]]},
-  {date:"2026-09-23",id:"2102763548715753927",theme:"Photonics",quote:"Demand for UHP lasers continues to exceed supply. NPO as larger than CPO.",tags:[["LITE","bull","Lumentum"],["SIVE","bull","Sivers"]]},
-  {date:"2026-09-23",id:"2102793298561970218",theme:"Themes",quote:"Only two recent ones were $ESMT for legacy memory trade and $CCXI for humanoids.",tags:[["ESMT","bull","Elite Semiconductor"],["CCXI","bull","Humanoids"],["MU","bull","Micron"],["AAOI","bull","Applied Optoelectronics"],["NBIS","bull","Nebius"]]},
-  {date:"2026-09-24",id:"2103139052363133062",theme:"Neocloud",quote:"I still think markets might be underestimating sum of parts growth, even if its core business grows like crazy 2027+ onwards.",tags:[["NBIS","bull","Nebius"],["ORCL","bear","Oracle"]]},
-  {date:"2026-09-24",id:"2103142451020267583",theme:"Humanoids",quote:"I still have $CCXI, they haven't even had the listing event yet, so volatility up until then is kinda meaningless to me.",tags:[["CCXI","bull","Humanoids"]]},
-  {date:"2026-09-24",id:"2103144796110061704",theme:"Neocloud",quote:"I would have a much more favorable view on $IREN after they finish their $6B ATM.",tags:[["IREN","neut","Iris Energy"],["NBIS","bull","Nebius"]]},
-  {date:"2026-09-24",id:"2103151990146801812",theme:"Photonics",quote:"I see $AAOI operationally very bullish for 2027. But I find it hard to get excited over funding infinite ATMs.",tags:[["AAOI","neut","Applied Optoelectronics"],["SNDK","bull","Sandisk"],["IREN","bear","Iris Energy"]]},
-  {date:"2026-09-24",id:"2103233602721132744",theme:"CPU",quote:"Nope for $AKAM. CPUs/Memory #1. Then Samsung / $MU / SK Hynix. Procurement through $JBL.",tags:[["AKAM","bear","Akamai"],["AMD","bull","AMD"],["MU","bull","Micron"],["INTC","bull","Intel"],["ARM","bull","Arm"],["JBL","bull","Jabil"],["SKHY","bull","SK Hynix"]]},
-  {date:"2026-09-28",id:"2104698369591706069",theme:"Photonics",quote:"$NVDA apparently secured 50% of $LITE Greensboro UHP laser capacity. That puts more strategic value on other merchant laser suppliers.",tags:[["LITE","bull","Lumentum"],["NVDA","neut","Nvidia"],["MRVL","bull","Marvell"]]},
-  {date:"2026-09-30",id:"2105151002760679706",theme:"Assembly",quote:"Today Amazon signed a $49.8M private placement into PCB maker Gold Circuit Electronics (2368).",tags:[["AMZN","bull","Amazon"],["AAOI","bull","Applied Optoelectronics"],["JBL","bull","Jabil"],["2368","bull","Gold Circuit"]]},
-  {date:"2026-09-30",id:"2105377657043206492",theme:"Assembly",quote:"I actually thought $JBL earnings were great. If you disagree with how markets reacted, that just means there's a buying opportunity.",tags:[["JBL","bull","Jabil"]]},
-  {date:"2026-09-30",id:"2105397070681248021",theme:"Models",quote:"$GOOGL Gemini 4 Argon benchmarks got released. Looks like Google is back. Will comment on $MU / $JBL earnings later.",tags:[["GOOGL","bull","Alphabet"],["MU","neut","Micron"],["JBL","neut","Jabil"]]}
+  {date:"2025-11-17",id:"1990452960758042917",theme:"Neocloud",tags:[["NBIS","bull","Nebius","當時最純的 neocloud 不對稱，等的是執行。"],["IREN","bear","Iris Energy","全棧執行不確定，不當首選。"],["CRWV","bear","CoreWeave","高息債務，現金流被利息吃掉。"],["ORCL","bear","Oracle","合約依賴，不是同一種不對稱。"],["APLD","bear","Applied Digital","同樣被高息債務拖住。"]]},
+  {date:"2025-12-30",id:"2005918544924664315",theme:"Materials",tags:[["AXTI","bull","AXT","磷化鋰基板瓶頸，有定價權重估，也有地緣和稀釋風險。"],["COHR","neut","Coherent","美國產能不夠，還被上游原料卡住。"],["LITE","bull","Lumentum","下游會向上游鎖雷射料，LITE 在被鎖的一邊。"],["DOWA","bull","Dowa","原料控制方，瓶頸更上游。"]]},
+  {date:"2026-09-09",id:"2097660318369697875",theme:"Photonics",tags:[["LITE","bull","Lumentum","自 2025 就在講雷射，2027–28 光子週期會像記憶體。"],["AAOI","bull","Applied Optoelectronics","光模組同主題，需求大於供給。"],["SIVE","bull","Sivers","CW 雷射供應商，同一瓶頸。"],["COHR","bull","Coherent","雷射同主題，這次轉偏多。"],["GLW","bull","Corning","光纖，本人披露有曝險。"]]},
+  {date:"2026-09-14",id:"2099392042657038698",theme:"Memory",tags:[["005930","bull","Samsung","長約到 2031、約 2.8 倍，不該因跌 4% 就賣。"]]},
+  {date:"2026-09-15",id:"2099659874892386678",theme:"Memory",tags:[["SKHY","bull","SK Hynix","約 2.8–3 倍且有底價，中期偏多。"],["SNDK","bull","Sandisk","高現金流投影，拿來當對照。"],["DRAM","bull","Memory basket","短缺更緊，記憶體籃子偏多。"],["CRWD","bear","CrowdStrike","估值和增速不匹配。"],["CRWV","bear","CoreWeave","利息吃掉現金流，唯一明確不同意的倉。"],["INTC","bull","Intel","可做類似的中期多頭。"],["AMD","bull","AMD","可做類似的中期多頭。"]]},
+  {date:"2026-09-16",id:"2100290486569505223",theme:"Photonics",tags:[["LITE","bull","Lumentum","鴻海把 CW 雷射列成最大瓶頸，對上她的判斷。"],["COHR","bull","Coherent","同一瓶頸再確認。"],["SIVE","bull","Sivers","漲價 channel check，供應仍緊。"]]},
+  {date:"2026-09-21",id:"2101906175046635887",theme:"Memory",tags:[["EWY","bull","Korea memory","仍做多記憶體，用韓國籃子表達。"],["DRAM","bull","Memory basket","舊製程記憶體是漲價交易。"],["SKHY","bull","SK Hynix","記憶體主線，長約邏輯沒變。"],["PSMC","neut","Powerchip","只作研究線索，沒有下結論。"]]},
+  {date:"2026-09-21",id:"2102068786493026492",theme:"Materials",tags:[["AXTI","bull","AXT","若定價權上來，仍有重估空間。"]]},
+  {date:"2026-09-22",id:"2102247915251224980",theme:"CPU",tags:[["META","neut","Meta","產品超預期，不是直接叫進。"],["AMD","bull","AMD","CPU 需求強，供給跟不上。"],["INTC","bull","Intel","稱需求只能滿足約一半。"],["ARM","bull","Arm","同一 CPU 短缺主題。"],["NBIS","neut","Nebius","不確定這款產品是否用到。"]]},
+  {date:"2026-09-23",id:"2102763548715753927",theme:"Photonics",tags:[["LITE","bull","Lumentum","高功率雷射需求仍大於供給，NPO 大於 CPO。"],["SIVE","bull","Sivers","實質營收要到 2027–2028。"]]},
+  {date:"2026-09-23",id:"2102793298561970218",theme:"Themes",tags:[["ESMT","bull","Elite Semiconductor","近期新點子，舊製程記憶體漲價。"],["CCXI","bull","Humanoids","近期另一個新點子，人形機器人。"],["MU","bull","Micron","上半年已寫過，這時只是再點名。"],["AAOI","bull","Applied Optoelectronics","上半年已寫過，進入追蹤。"],["NBIS","bull","Nebius","上半年已寫過，仍在名單裡。"]]},
+  {date:"2026-09-24",id:"2103139052363133062",theme:"Neocloud",tags:[["NBIS","bull","Nebius","市場仍可能低估分部加總。"],["ORCL","bear","Oracle","專案延期被她當成保護，不是利多。"]]},
+  {date:"2026-09-24",id:"2103142451020267583",theme:"Humanoids",tags:[["CCXI","bull","Humanoids","仍持有，上市事件還沒發生。"]]},
+  {date:"2026-09-24",id:"2103144796110061704",theme:"Neocloud",tags:[["IREN","neut","Iris Energy","60 億美元增發走完前，看法轉中性。"],["NBIS","bull","Nebius","仍是 neocloud 對照組。"]]},
+  {date:"2026-09-24",id:"2103151990146801812",theme:"Photonics",tags:[["AAOI","neut","Applied Optoelectronics","2027 營運偏多，但無限增發讓股價難興奮。"],["SNDK","bull","Sandisk","拿來當機會成本。"],["IREN","bear","Iris Energy","同樣批評大額增發。"]]},
+  {date:"2026-09-24",id:"2103233602721132744",theme:"CPU",tags:[["AKAM","bear","Akamai","明確不買，受益不在簽單方。"],["AMD","bull","AMD","這張單的彈性更高。"],["MU","bull","Micron","記憶體先受益。"],["INTC","bull","Intel","CPU 先受益。"],["ARM","bull","Arm","CPU 同主題。"],["JBL","bull","Jabil","採購外溢到組裝。"],["SKHY","bull","SK Hynix","記憶體供應商。"]]},
+  {date:"2026-09-28",id:"2104698369591706069",theme:"Photonics",tags:[["LITE","bull","Lumentum","Nvidia 若鎖下 Greensboro 產能，LITE 戰略價值上升。"],["NVDA","neut","Nvidia","鎖料與回購，沒有直接買賣結論。"],["MRVL","bull","Marvell","基板是瓶頸，連帶偏多。"]]},
+  {date:"2026-09-30",id:"2105151002760679706",theme:"Assembly",tags:[["AMZN","bull","Amazon","入股 PCB 廠，供應鏈地圖變完整。"],["AAOI","bull","Applied Optoelectronics","在它的光學曝險裡。"],["JBL","bull","Jabil","組裝端。"],["2368","bull","Gold Circuit","金像電，金額小但有戰略意義。"]]},
+  {date:"2026-09-30",id:"2105377657043206492",theme:"Assembly",tags:[["JBL","bull","Jabil","財報好於市場反應，她當成買點。"]]},
+  {date:"2026-09-30",id:"2105397070681248021",theme:"Models",tags:[["GOOGL","bull","Alphabet","內部模型看起來回來了。"],["MU","neut","Micron","當日說稍後再評，沒有新結論。"],["JBL","neut","Jabil","稍早已偏多，這則只是預告再評。"]]}
 ];
 const themes = ["Memory","Photonics","Neocloud","Materials","CPU","Humanoids","Assembly"];
-const label = {bull:"多頭 Long", bear:"空頭 Short", neut:"中立 Neutral"};
-let mode = "theme";
+const label = {bull:"多頭", bear:"空頭", neut:"中立"};
+let mode = "theme", rows = [];
 function inRange(d){ if (mode==="theme" || mode==="month") return d >= "2026-09-01"; if (mode==="week") return d >= "2026-09-24"; return d === "2026-09-30"; }
 function agg(){
   const map = {};
   POSTS.filter(p => mode==="theme" || inRange(p.date)).forEach(p => p.tags.forEach(t => {
-    if (!map[t[0]]) map[t[0]] = {t:t[0], name:t[2], bull:0, bear:0, neut:0, last:p.date, theme:p.theme, items:[]};
+    if (!map[t[0]]) map[t[0]] = {t:t[0], name:t[2], bull:0, bear:0, neut:0, last:p.date, items:[]};
     map[t[0]][t[1]]++; map[t[0]].last = p.date;
-    map[t[0]].items.push({date:p.date, id:p.id, stance:t[1], quote:p.quote});
+    map[t[0]].items.push({date:p.date, id:p.id, stance:t[1], note:t[3]});
   }));
-  return Object.values(map).sort((a,b)=>(b.bull-a.bull) || (b.items.length-a.items.length));
+  return Object.values(map).sort((a,b)=>b.items.length-a.items.length || b.bull-a.bull);
 }
-function cards(rows){
-  const picks = themes.map(th => ({th, hit: rows.filter(r => r.theme===th && r.bull>0).sort((a,b)=>b.bull-a.bull)[0]})).filter(x => x.hit).slice(0,5);
-  document.getElementById("cards").innerHTML = picks.map(x => {
-    const n = x.hit.items.length;
-    return `<article class="card"><div class="who"><div class="av">S</div><div>Serenity<small>@aleabitoreddit · ${x.th}</small></div></div><div class="tick"><b><button class="link" data-t="${x.hit.t}">${x.hit.t}</button></b><span>${n} mentions</span></div><div class="meta"><span>Bull ${x.hit.bull} · Total ${n}</span><span class="pos">Long</span></div></article>`;
-  }).join("");
+function cards(){
+  document.getElementById("cards").innerHTML = themes.map(th => rows.find(r => r.bull>0)).filter(Boolean).slice(0,5).map(x => `<article class="card"><div class="who"><div class="av">S</div><div>Serenity<small>@aleabitoreddit</small></div></div><div class="tick"><b><button class="link" data-t="${x.t}">${x.t}</button></b><span>${x.items.length} mentions</span></div><div class="meta"><span>Bull ${x.bull}</span><span class="pos">Long</span></div></article>`).join("");
 }
-function table(rows){
+function table(){
   document.getElementById("rows").innerHTML = rows.map(r => {
-    const n = r.items.length || 1;
-    const bp = Math.round(r.bull/n*100), sp = Math.round(r.bear/n*100);
-    return `<tr><td class="name"><b><button class="link" data-t="${r.t}">${r.t}</button></b><small>${r.name}</small></td><td>${bp}%</td><td><div class="bar"><i style="width:${bp}%;background:#2f8f55"></i><i style="width:${sp}%;background:#c45a4a"></i></div><div class="split"><span class="dot" style="background:#2f8f55"></span>${bp}% Bull &nbsp; <span class="dot" style="background:#c45a4a"></span>${sp}% Bear</div></td><td>${sp}%</td><td><button class="link" data-t="${r.t}">${r.items.length}</button></td><td class="pos">${r.bull}</td><td class="neg">${r.bear}</td><td>${r.neut}</td><td>${r.last}</td></tr>`;
+    const n = r.items.length || 1, bp = Math.round(r.bull/n*100), sp = Math.round(r.bear/n*100);
+    return `<tr><td class="name"><button class="link" data-t="${r.t}">${r.t}</button><small>${r.name}</small></td><td>${bp}%</td><td><div class="bar"><i style="width:${bp}%;background:#2f8f55"></i><i style="width:${sp}%;background:#c45a4a"></i></div></td><td>${sp}%</td><td><button class="link" data-t="${r.t}">${n}</button></td><td class="pos">${r.bull}</td><td class="neg">${r.bear}</td><td>${r.neut}</td><td>${r.last}</td></tr>`;
   }).join("");
 }
-function openTicker(t, rows){
-  const r = rows.find(x => x.t === t);
-  const box = document.getElementById("drawer");
-  if (!r) return;
-  box.className = "open";
-  box.innerHTML = `<h2>${r.t} · ${r.items.length} 則原文</h2><p class="hint">提及 ${r.items.length} 次，下面 ${r.items.length} 則。</p>` + r.items.slice().reverse().map((item, i) => `<article><h3>${i+1}. ${item.date} UTC · ${label[item.stance]} · <a href="https://x.com/aleabitoreddit/status/${item.id}" target="_blank">原帖</a></h3><p>${item.quote}</p></article>`).join("");
-  box.scrollIntoView({behavior:"smooth", block:"start"});
+function openTicker(t){
+  const r = rows.find(x => x.t===t); if (!r) return;
+  const lead = r.bull>r.bear ? "整體偏多" : r.bear>r.bull ? "整體偏空" : "多空交錯";
+  document.getElementById("modal").innerHTML = `<header><div><h3>${r.t}</h3><div class="hint">${r.name} · ${r.items.length} 次提及</div></div><button class="link" id="close">關閉</button></header><div class="sum">${lead}。下面 ${r.items.length} 段，一段對一次提及。</div>` + r.items.slice().reverse().map((item,i)=>`<div class="item"><b>${i+1}. ${item.date} · ${label[item.stance]}</b><div>${item.note}</div><div style="margin-top:6px"><a href="https://x.com/aleabitoreddit/status/${item.id}" target="_blank">原文連結</a></div></div>`).join("");
+  document.getElementById("mask").classList.add("open");
+  document.getElementById("close").onclick = () => document.getElementById("mask").classList.remove("open");
 }
 function render(){
-  const titles = {theme:"Theme Consensus", day:"Daily Stance", week:"Weekly Stance", month:"Monthly Consensus"};
-  document.getElementById("title").textContent = titles[mode];
+  document.getElementById("title").textContent = {theme:"Theme Consensus",day:"Daily Stance",week:"Weekly Stance",month:"Monthly Consensus"}[mode];
   document.getElementById("range").textContent = mode==="day" ? "30 Sep 2026" : mode==="week" ? "Week of 24 Sep" : "Sep 2026 sample";
-  const rows = agg(); cards(rows); table(rows);
-  document.querySelectorAll("[data-t]").forEach(el => el.onclick = () => openTicker(el.dataset.t, rows));
+  rows = agg(); cards(); table();
+  document.querySelectorAll("[data-t]").forEach(el => el.onclick = () => openTicker(el.dataset.t));
 }
-document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => { mode=b.dataset.r; document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x===b)); render(); });
+document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => { mode=b.dataset.r; document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on", x===b)); render(); });
+document.getElementById("mask").onclick = e => { if (e.target.id==="mask") e.currentTarget.classList.remove("open"); };
 render();
 </script>
 </body>
