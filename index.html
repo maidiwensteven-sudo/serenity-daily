@@ -18,7 +18,9 @@
   .grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
   .card { background:#fff; border:1px solid #eeeae2; border-radius:14px; padding:14px; min-height:132px; }
   .who { display:flex; gap:8px; align-items:center; font-size:13px; } .who small { display:block; color:var(--muted); }
-  .av { width:28px; height:28px; border-radius:50%; background:#ece7dc; display:grid; place-items:center; font-size:11px; }
+  .av { width:36px; height:36px; border-radius:50%; background:#ece7dc; display:grid; place-items:center; color:#3f3c37; flex:none; }
+  .av svg { width:18px; height:18px; display:block; }
+  .tn { font-weight:650; } .tz { color:var(--muted); margin-left:6px; font-size:12px; }
   .tick { display:flex; justify-content:space-between; align-items:flex-end; margin-top:18px; } .tick b { font-size:22px; }
   .meta { display:flex; justify-content:space-between; margin-top:6px; font-size:12px; color:#8a847a; }
   .pos { color:var(--green); font-weight:680; } .neg { color:var(--red); font-weight:680; }
@@ -163,7 +165,7 @@
   <aside class="feed"><h2>新貼文</h2><p class="hint" id="feed-meta"></p><div id="feed"></div></aside>
   </div>
   <div class="banner"><b>獨立筆記。不是她的產品，不是投資建議。</b> 整理自 @aleabitoreddit 公開貼文。只放短摘和原文連結，不轉載全文。價格沒有收盤來源就標未核對，不估算報酬。她可能持有相關標的。</div>
-  <div class="note" id="changelog">2026-10-01 16:32 UTC</div>
+  <div class="note" id="changelog">更新時間 2026-10-02 00:32 香港時間</div>
   
   
   <footer>這是整理工具，不是投資建議。多空是根據原文做的判斷，可能判錯。決定前看原文。</footer>
@@ -493,6 +495,14 @@ function agg(){
   return Object.values(map).sort((a,b)=>b.items.length-a.items.length || b.bull-a.bull);
 }
 function cards(){
+  const icon = {
+    Memory: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="7" y="7" width="10" height="10" rx="1.4"/><path d="M9 7V4.5M12 7V4.5M15 7V4.5M9 19.5V17M12 19.5V17M15 19.5V17M7 9H4.5M7 12H4.5M7 15H4.5M19.5 9H17M19.5 12H17M19.5 15H17"/></svg>',
+    Photonics: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9.2 4.5c3.2 2.4 3.2 12.6 0 15"/><path d="M14.8 4.5c-3.2 2.4-3.2 12.6 0 15"/><path d="M3 12h4.2M16.8 12H21"/></svg>',
+    Neocloud: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 17.5h9.2a3.2 3.2 0 0 0 .3-6.4 4.6 4.6 0 0 0-8.8-1.4 3.1 3.1 0 0 0-.7 7.8z"/></svg>',
+    Materials: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3.5l6.2 6.2L12 20.5 5.8 9.7 12 3.5z"/><path d="M5.8 9.7h12.4M12 3.5v6.2"/></svg>',
+    CPU: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="8" y="8" width="8" height="8" rx="1.2"/><path d="M10 8V5M12 8V5M14 8V5M10 19v-3M12 19v-3M14 19v-3M8 10H5M8 12H5M8 14H5M19 10h-3M19 12h-3M19 14h-3"/></svg>'
+  };
+  const zh = {Memory:"記憶體", Photonics:"光子", Neocloud:"新雲", Materials:"材料", CPU:"處理器"};
   const picks = themes.map(th => {
     const map = {};
     POSTS.filter(p => p.theme===th && (mode==="theme" || inRange(p.date))).forEach(p => p.tags.forEach(t => {
@@ -503,7 +513,7 @@ function cards(){
     const hit = Object.values(map).sort((a,b)=>b.n-a.n)[0];
     return hit ? {th, t:hit.t, n:hit.n} : null;
   }).filter(Boolean);
-  document.getElementById("cards").innerHTML = picks.map(x => `<article class="card"><div class="who"><div class="av">${x.th.slice(0,1)}</div><div>${x.th}<small>@aleabitoreddit</small></div></div><div class="tick"><b><button class="link" data-t="${x.t}">${x.t}</button></b><span>${x.n} bullish</span></div><div class="meta"><span>這主題最多提及</span><span class="pos">Long</span></div></article>`).join("");
+  document.getElementById("cards").innerHTML = picks.map(x => `<article class="card"><div class="who"><div class="av">${icon[x.th]}</div><div><span class="tn">${x.th}</span><span class="tz">${zh[x.th]}</span><small>@aleabitoreddit</small></div></div><div class="tick"><b><button class="link" data-t="${x.t}">${x.t}</button></b><span>${x.n} bullish</span></div><div class="meta"><span>這主題最多提及</span><span class="pos">Long</span></div></article>`).join("");
 }
 function table(){
   document.getElementById("rows").innerHTML = rows.map(r => {
@@ -605,6 +615,6 @@ document.querySelectorAll(".rtabs button").forEach(b => b.onclick = () => {
 });
 document.getElementById("mask").onclick = e => { if (e.target.id==="mask") e.currentTarget.classList.remove("open"); };
 document.getElementById("feed").innerHTML = FEED.map(p => `<article class="post"><time>${p.date} UTC</time>${bi(p.text)}<a href="https://x.com/aleabitoreddit/status/${p.id}" target="_blank">原文 Original →</a></article>`).join("");
-document.getElementById("feed-meta").textContent = "2026-10-01 16:32 UTC";
+document.getElementById("feed-meta").textContent = "更新時間 2026-10-02 00:32 香港時間";
 render();
 </script></body></html>
