@@ -73,7 +73,7 @@
   </div>
   <div class="banner"><b>獨立筆記，不是 Serenity 官方。</b> 整理自 @aleabitoreddit 公開貼文。不是她的產品，不是投資建議。她可能持有相關標的。這裡只放短摘和連結，不轉載全文。</div>
   <div class="note">收錄範圍從 2025 年 1 月起。1 月到 8 月沒有抓到原創研究帖，最早一則是 2025-09-29。回覆和沒有點名的帖仍未收錄，提及次數只算已收錄樣本。</div>
-  <div class="note" id="changelog">上次檢查 2026-10-01 22:56 台北。這次沒有新的原創研究帖。最新仍是 2026-09-30 20:39 UTC。</div>
+  <div class="note" id="changelog">上次檢查 2026-10-01 23:04 台北。這次沒有新的原創研究帖。最新仍是 2026-09-30 20:39 UTC。</div>
   
   
   <footer>非投資建議。中文是判斷摘要，英文是對照，點連結才是原帖。</footer>
@@ -318,6 +318,6 @@ document.getElementById("q").oninput = () => { const q = document.getElementById
 document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => { mode=b.dataset.r; document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on", x===b)); render(); });
 document.getElementById("mask").onclick = e => { if (e.target.id==="mask") e.currentTarget.classList.remove("open"); };
 document.getElementById("feed").innerHTML = FEED.map(p => `<article class="post"><time>${p.date} UTC</time>${bi(p.text)}<a href="https://x.com/aleabitoreddit/status/${p.id}" target="_blank">原文 Original →</a></article>`).join("");
-document.getElementById("feed-meta").textContent = "上次檢查 2026-10-01 22:56 台北。這次沒有新的原創帖。最新仍是 2026-09-30 20:39 UTC。";
+document.getElementById("feed-meta").textContent = "上次檢查 2026-10-01 23:04 台北。這次沒有新的原創帖。最新仍是 2026-09-30 20:39 UTC。";
 render();
 </script></body></html>
