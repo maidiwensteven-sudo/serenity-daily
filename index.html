@@ -27,8 +27,7 @@
   .tick b { font-size:22px; letter-spacing:-.03em; }
   .tick span { font-size:11px; color:var(--muted); }
   .meta { display:flex; justify-content:space-between; margin-top:6px; font-size:12px; color:#8a847a; }
-  .pos { color:var(--green); font-weight:640; }
-  .neg { color:var(--red); font-weight:640; }
+  .pos { color:var(--green); font-weight:640; } .neg { color:var(--red); font-weight:640; }
   table { width:100%; border-collapse:collapse; background:#fbfaf7; border:1px solid var(--line); border-radius:12px; overflow:hidden; margin-top:18px; }
   th { text-align:left; font-size:12px; color:#8b867d; font-weight:520; padding:12px; background:#f6f4ef; border-bottom:1px solid var(--line); }
   td { padding:14px 12px; border-bottom:1px solid #eeeae3; vertical-align:middle; background:#fff; }
@@ -38,6 +37,8 @@
   .split { font-size:12px; margin-top:6px; }
   .dot { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:4px; }
   a { color:#3d5e49; text-decoration:none; }
+  .log article { background:#fff; border:1px solid #eeeae2; border-radius:14px; padding:14px 16px; margin:10px 0; }
+  .log h3 { margin:0 0 6px; font-size:14px; } .log p { margin:0; line-height:1.5; }
   footer { color:var(--muted); font-size:12px; margin-top:16px; }
   @media (max-width:980px) { .grid { grid-template-columns:1fr 1fr; } h1 { font-size:32px; } }
 </style>
@@ -50,41 +51,36 @@
     <button data-r="week">Weekly 週</button>
     <button data-r="month">Monthly 月</button>
   </div>
-  <div class="head">
-    <h1 id="title">Monthly Consensus</h1>
-    <div class="range" id="range">Sample · through 1 Oct 2026</div>
-  </div>
+  <div class="head"><h1 id="title">Monthly Consensus</h1><div class="range" id="range">Sample · through 1 Oct 2026</div></div>
   <h2>Top bullish name in each theme</h2>
-  <p class="hint">依樣本裡的明確多頭提及排序。報酬不在這頁，避免把別的站的漲幅抄進來。Ranked by explicit bullish mentions in this sample. Returns are omitted.</p>
+  <p class="hint">依樣本裡的明確多頭提及排序。報酬不在這頁。Ranked by explicit bullish mentions. Returns omitted.</p>
   <div class="grid" id="cards"></div>
-  <table>
-    <thead><tr><th>Stock</th><th>Bull %</th><th>Position split</th><th>Bear %</th><th>Mentions</th><th>Bullish</th><th>Bearish</th><th>Neutral</th><th>Latest</th></tr></thead>
-    <tbody id="rows"></tbody>
-  </table>
-  <footer>非投資建議 Not investment advice。立場依 @aleabitoreddit 公開文字判讀，她可能持有相關標的。樣本不是完整封存。上次整理 2026-10-01 17:34，每日 08:15 台北時間更新。</footer>
+  <table><thead><tr><th>Stock</th><th>Bull %</th><th>Position split</th><th>Bear %</th><th>Mentions</th><th>Bullish</th><th>Bearish</th><th>Neutral</th><th>Latest</th></tr></thead><tbody id="rows"></tbody></table>
+  <div class="log" id="log"></div>
+  <footer>非投資建議。下面是摘錄，點日期進原文。她可能持有相關標的。</footer>
 </div>
 <script>
 const POSTS = [
-  {date:"2025-11-17",id:"1990452960758042917",theme:"Neocloud",tags:[["NBIS","bull","Nebius"],["IREN","bear","Iris Energy"],["CRWV","bear","CoreWeave"],["ORCL","bear","Oracle"],["APLD","bear","Applied Digital"]]},
-  {date:"2025-12-30",id:"2005918544924664315",theme:"Materials",tags:[["AXTI","bull","AXT"],["COHR","neut","Coherent"],["LITE","bull","Lumentum"],["DOWA","bull","Dowa"]]},
-  {date:"2026-09-09",id:"2097660318369697875",theme:"Photonics",tags:[["LITE","bull","Lumentum"],["AAOI","bull","Applied Optoelectronics"],["SIVE","bull","Sivers"],["COHR","bull","Coherent"],["GLW","bull","Corning"]]},
-  {date:"2026-09-14",id:"2099392042657038698",theme:"Memory",tags:[["005930","bull","Samsung"]]},
-  {date:"2026-09-15",id:"2099659874892386678",theme:"Memory",tags:[["SKHY","bull","SK Hynix"],["SNDK","bull","Sandisk"],["DRAM","bull","Memory basket"],["CRWD","bear","CrowdStrike"],["CRWV","bear","CoreWeave"],["INTC","bull","Intel"],["AMD","bull","AMD"]]},
-  {date:"2026-09-16",id:"2100290486569505223",theme:"Photonics",tags:[["LITE","bull","Lumentum"],["COHR","bull","Coherent"],["SIVE","bull","Sivers"]]},
-  {date:"2026-09-21",id:"2101906175046635887",theme:"Memory",tags:[["EWY","bull","Korea memory"],["DRAM","bull","Memory basket"],["SKHY","bull","SK Hynix"],["PSMC","neut","Powerchip"]]},
-  {date:"2026-09-21",id:"2102068786493026492",theme:"Materials",tags:[["AXTI","bull","AXT"]]},
-  {date:"2026-09-22",id:"2102247915251224980",theme:"CPU",tags:[["META","neut","Meta"],["AMD","bull","AMD"],["INTC","bull","Intel"],["ARM","bull","Arm"],["NBIS","neut","Nebius"]]},
-  {date:"2026-09-23",id:"2102763548715753927",theme:"Photonics",tags:[["LITE","bull","Lumentum"],["SIVE","bull","Sivers"]]},
-  {date:"2026-09-23",id:"2102793298561970218",theme:"Themes",tags:[["ESMT","bull","Elite Semiconductor"],["CCXI","bull","Humanoids"],["MU","bull","Micron"],["AAOI","bull","Applied Optoelectronics"],["NBIS","bull","Nebius"]]},
-  {date:"2026-09-24",id:"2103139052363133062",theme:"Neocloud",tags:[["NBIS","bull","Nebius"],["ORCL","bear","Oracle"]]},
-  {date:"2026-09-24",id:"2103142451020267583",theme:"Humanoids",tags:[["CCXI","bull","Humanoids"]]},
-  {date:"2026-09-24",id:"2103144796110061704",theme:"Neocloud",tags:[["IREN","neut","Iris Energy"],["NBIS","bull","Nebius"]]},
-  {date:"2026-09-24",id:"2103151990146801812",theme:"Photonics",tags:[["AAOI","neut","Applied Optoelectronics"],["SNDK","bull","Sandisk"],["IREN","bear","Iris Energy"]]},
-  {date:"2026-09-24",id:"2103233602721132744",theme:"CPU",tags:[["AKAM","bear","Akamai"],["AMD","bull","AMD"],["MU","bull","Micron"],["INTC","bull","Intel"],["ARM","bull","Arm"],["JBL","bull","Jabil"],["SKHY","bull","SK Hynix"]]},
-  {date:"2026-09-28",id:"2104698369591706069",theme:"Photonics",tags:[["LITE","bull","Lumentum"],["NVDA","neut","Nvidia"],["MRVL","bull","Marvell"]]},
-  {date:"2026-09-30",id:"2105151002760679706",theme:"Assembly",tags:[["AMZN","bull","Amazon"],["AAOI","bull","Applied Optoelectronics"],["JBL","bull","Jabil"],["2368","bull","Gold Circuit"]]},
-  {date:"2026-09-30",id:"2105377657043206492",theme:"Assembly",tags:[["JBL","bull","Jabil"]]},
-  {date:"2026-09-30",id:"2105397070681248021",theme:"Models",tags:[["GOOGL","bull","Alphabet"],["MU","neut","Micron"],["JBL","neut","Jabil"]]}
+  {date:"2025-11-17",id:"1990452960758042917",theme:"Neocloud",quote:"Nebius at $86.69 is the purest Neocloud and AI-infra asymmetry left. You are simply just waiting for company execution.",tags:[["NBIS","bull","Nebius"],["IREN","bear","Iris Energy"],["CRWV","bear","CoreWeave"],["ORCL","bear","Oracle"],["APLD","bear","Applied Digital"]]},
+  {date:"2025-12-30",id:"2005918544924664315",theme:"Materials",quote:"This is a call on critical materials game theory. I do expect an immense bottleneck in 2026 in both InP substrates and InP feedstock.",tags:[["AXTI","bull","AXT"],["COHR","neut","Coherent"],["LITE","bull","Lumentum"],["DOWA","bull","Dowa"]]},
+  {date:"2026-09-09",id:"2097660318369697875",theme:"Photonics",quote:"I've been talking about lasers like $LITE / $AAOI since 2025. The 2027-2028 photonics supercycle will look a lot like memory did in 2025-2026.",tags:[["LITE","bull","Lumentum"],["AAOI","bull","Applied Optoelectronics"],["SIVE","bull","Sivers"],["COHR","bull","Coherent"],["GLW","bull","Corning"]]},
+  {date:"2026-09-14",id:"2099392042657038698",theme:"Memory",quote:"Samsung has memory LTAs extending to 2031? And it's trading at ~2.8x 2027E P/E? So you're buying Samsung? No, I'm selling on a 4% drop.",tags:[["005930","bull","Samsung"]]},
+  {date:"2026-09-15",id:"2099659874892386678",theme:"Memory",quote:"Not quite sure about short-term, but over the medium run it's hard to not see Leopold's positions pulling an Inverse Cramer.",tags:[["SKHY","bull","SK Hynix"],["SNDK","bull","Sandisk"],["DRAM","bull","Memory basket"],["CRWD","bear","CrowdStrike"],["CRWV","bear","CoreWeave"],["INTC","bull","Intel"],["AMD","bull","AMD"]]},
+  {date:"2026-09-16",id:"2100290486569505223",theme:"Photonics",quote:"Foxconn Interconnect Chairman identifies CW lasers and fiber as the biggest bottleneck in photonics.",tags:[["LITE","bull","Lumentum"],["COHR","bull","Coherent"],["SIVE","bull","Sivers"]]},
+  {date:"2026-09-21",id:"2101906175046635887",theme:"Memory",quote:"I'm still long memory (eg. $EWY / $DRAM). Legacy memory is a very interesting trade currently due to ASP hike potential.",tags:[["EWY","bull","Korea memory"],["DRAM","bull","Memory basket"],["SKHY","bull","SK Hynix"],["PSMC","neut","Powerchip"]]},
+  {date:"2026-09-21",id:"2102068786493026492",theme:"Materials",quote:"Glad $AXTI also went up +12.4% today. If they have more control over pricing, I do think there's a lot of room for rerating.",tags:[["AXTI","bull","AXT"]]},
+  {date:"2026-09-22",id:"2102247915251224980",theme:"CPU",quote:"Intel CEO also said recently that CPU demand is so strong they can only support 50% of what customers need.",tags:[["META","neut","Meta"],["AMD","bull","AMD"],["INTC","bull","Intel"],["ARM","bull","Arm"],["NBIS","neut","Nebius"]]},
+  {date:"2026-09-23",id:"2102763548715753927",theme:"Photonics",quote:"Demand for UHP lasers continues to exceed supply. NPO as larger than CPO.",tags:[["LITE","bull","Lumentum"],["SIVE","bull","Sivers"]]},
+  {date:"2026-09-23",id:"2102793298561970218",theme:"Themes",quote:"Only two recent ones were $ESMT for legacy memory trade and $CCXI for humanoids.",tags:[["ESMT","bull","Elite Semiconductor"],["CCXI","bull","Humanoids"],["MU","bull","Micron"],["AAOI","bull","Applied Optoelectronics"],["NBIS","bull","Nebius"]]},
+  {date:"2026-09-24",id:"2103139052363133062",theme:"Neocloud",quote:"I still think markets might be underestimating sum of parts growth, even if its core business grows like crazy 2027+ onwards.",tags:[["NBIS","bull","Nebius"],["ORCL","bear","Oracle"]]},
+  {date:"2026-09-24",id:"2103142451020267583",theme:"Humanoids",quote:"I still have $CCXI, they haven't even had the listing event yet, so volatility up until then is kinda meaningless to me.",tags:[["CCXI","bull","Humanoids"]]},
+  {date:"2026-09-24",id:"2103144796110061704",theme:"Neocloud",quote:"I would have a much more favorable view on $IREN after they finish their $6B ATM.",tags:[["IREN","neut","Iris Energy"],["NBIS","bull","Nebius"]]},
+  {date:"2026-09-24",id:"2103151990146801812",theme:"Photonics",quote:"I see $AAOI operationally very bullish for 2027. But I find it hard to get excited over funding infinite ATMs.",tags:[["AAOI","neut","Applied Optoelectronics"],["SNDK","bull","Sandisk"],["IREN","bear","Iris Energy"]]},
+  {date:"2026-09-24",id:"2103233602721132744",theme:"CPU",quote:"Nope for $AKAM. CPUs/Memory #1. Then Samsung / $MU / SK Hynix. Procurement through $JBL.",tags:[["AKAM","bear","Akamai"],["AMD","bull","AMD"],["MU","bull","Micron"],["INTC","bull","Intel"],["ARM","bull","Arm"],["JBL","bull","Jabil"],["SKHY","bull","SK Hynix"]]},
+  {date:"2026-09-28",id:"2104698369591706069",theme:"Photonics",quote:"$NVDA apparently secured 50% of $LITE Greensboro UHP laser capacity. That puts more strategic value on other merchant laser suppliers.",tags:[["LITE","bull","Lumentum"],["NVDA","neut","Nvidia"],["MRVL","bull","Marvell"]]},
+  {date:"2026-09-30",id:"2105151002760679706",theme:"Assembly",quote:"Today Amazon signed a $49.8M private placement into PCB maker Gold Circuit Electronics (2368).",tags:[["AMZN","bull","Amazon"],["AAOI","bull","Applied Optoelectronics"],["JBL","bull","Jabil"],["2368","bull","Gold Circuit"]]},
+  {date:"2026-09-30",id:"2105377657043206492",theme:"Assembly",quote:"I actually thought $JBL earnings were great. If you disagree with how markets reacted, that just means there's a buying opportunity.",tags:[["JBL","bull","Jabil"]]},
+  {date:"2026-09-30",id:"2105397070681248021",theme:"Models",quote:"$GOOGL Gemini 4 Argon benchmarks got released. Looks like Google is back. Will comment on $MU / $JBL earnings later.",tags:[["GOOGL","bull","Alphabet"],["MU","neut","Micron"],["JBL","neut","Jabil"]]}
 ];
 const themes = ["Memory","Photonics","Neocloud","Materials","CPU","Humanoids","Assembly"];
 let mode = "theme";
@@ -109,7 +105,7 @@ function table(rows){
     const n = r.bull+r.bear+r.neut || 1;
     const bp = Math.round(r.bull/n*100), sp = Math.round(r.bear/n*100);
     const word = r.bull>r.bear ? "Long" : r.bear>r.bull ? "Short" : "Neutral";
-    return `<tr><td class="name"><b>${r.t}</b><small>${r.name}</small></td><td>${bp}%</td><td><div class="bar"><i style="width:${bp}%;background:#2f8f55"></i><i style="width:${sp}%;background:#c45a4a"></i></div><div class="split"><span class="dot" style="background:#2f8f55"></span>${bp}% Bull &nbsp; <span class="dot" style="background:#c45a4a"></span>${sp}% Bear</div></td><td>${sp}%</td><td>${r.bull+r.bear+r.neut}</td><td class="pos">${r.bull}</td><td class="neg">${r.bear}</td><td>${r.neut}</td><td><a href="https://x.com/aleabitoreddit/status/${r.id}" target="_blank">${r.last} · ${word}</a></td></tr>`;
+    return `<tr><td class="name"><b>${r.t}</b><small>${r.name}</small></td><td>${bp}%</td><td><div class="bar"><i style="width:${bp}%;background:#2f8f55"></i><i style="width:${sp}%;background:#c45a4a"></i></div><div class="split"><span class="dot" style="background:#2f8f55"></span>${bp}% Bull &nbsp; <span class="dot" style="background:#c45a4a"></span>${sp}% Bear</div></td><td>${sp}%</td><td>${n}</td><td class="pos">${r.bull}</td><td class="neg">${r.bear}</td><td>${r.neut}</td><td><a href="https://x.com/aleabitoreddit/status/${r.id}" target="_blank">${r.last} · ${word}</a></td></tr>`;
   }).join("");
 }
 function render(){
@@ -117,6 +113,7 @@ function render(){
   document.getElementById("title").textContent = titles[mode];
   document.getElementById("range").textContent = mode==="day" ? "30 Sep 2026" : mode==="week" ? "Week of 24 Sep" : "Sep 2026 sample";
   const rows = agg(); cards(rows); table(rows);
+  document.getElementById("log").innerHTML = "<h2>她什麼時候說的，原文是什麼</h2>" + POSTS.filter(p => mode==="theme" || inRange(p.date)).slice().reverse().map(p => `<article><h3>${p.date} UTC · ${p.tags.map(t=>t[0]).join(" ")} · <a href="https://x.com/aleabitoreddit/status/${p.id}" target="_blank">原文</a></h3><p>${p.quote}</p></article>`).join("");
 }
 document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => { mode=b.dataset.r; document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x===b)); render(); });
 render();
