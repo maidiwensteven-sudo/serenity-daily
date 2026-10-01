@@ -403,27 +403,10 @@ function openTicker(t){
   document.getElementById("close").onclick = () => document.getElementById("mask").classList.remove("open");
 }
 function renderShifts(){
-  const by = {};
-  POSTS.forEach(p => p.tags.forEach(tag => {
-    if (!by[tag[0]]) by[tag[0]] = [];
-    by[tag[0]].push({date:p.date, stance:tag[1]});
-  }));
-  const flips = [];
   const first = {};
-  Object.entries(by).forEach(([t, items]) => {
-    first[t] = items[0].date;
-    let prev = items[0].stance;
-    for (let i=1;i<items.length;i++){
-      if (items[i].stance !== prev){ flips.push({t, date:items[i].date, from:prev, to:items[i].stance}); prev = items[i].stance; }
-    }
-  });
-  const seen = new Set();
-  const latestFlips = [];
-  flips.sort((a,b) => a.date < b.date ? 1 : -1);
-  flips.forEach(f => { if (seen.has(f.t)) return; seen.add(f.t); latestFlips.push(f); });
+  POSTS.forEach(p => p.tags.forEach(tag => { if (!first[tag[0]]) first[tag[0]] = p.date; }));
   const born = Object.entries(first).filter(([,d]) => d==="2026-09-30").map(([t]) => `<button class="link" data-t="${t}">${t}</button>`).join("");
-  const flipHtml = latestFlips.map(f => `<span><button class="link" data-t="${f.t}">${f.t}</button><small>${f.date.slice(5)} ${zhStance(f.from).slice(0,1)}→${zhStance(f.to).slice(0,1)}</small></span>`).join("");
-  document.getElementById("shiftbar").innerHTML = `<div class="shiftrow"><span class="k">今日</span><span>沒有新代號</span></div><div class="shiftrow"><span class="k">新出現</span><span class="chips">${born || "沒有"}</span></div><div class="shiftrow"><span class="k">改口</span><span class="chips">${flipHtml || "沒有"}</span></div>`;
+  document.getElementById("shiftbar").innerHTML = `<div class="shiftrow"><span class="k">今日</span><span>沒有新代號</span></div><div class="shiftrow"><span class="k">新出現</span><span class="chips">${born || "沒有"}</span></div>`;
 }
 
 function render(){
