@@ -65,8 +65,8 @@
   <aside class="feed"><h2>新貼文</h2><p class="hint" id="feed-meta"></p><div id="feed"></div></aside>
   </div>
   <div class="banner"><b>獨立筆記，不是 Serenity 官方。</b> 整理自 @aleabitoreddit 公開貼文。不是她的產品，不是投資建議。她可能持有相關標的。這裡只放短摘和連結，不轉載全文。</div>
-  <div class="note">尚未完整收錄。2025 年 11 月以前、未點名的回覆，以及沒有抓到的舊帖，都算尚未收錄。表上的提及次數只計算已收錄樣本，不是她說過的全部。</div>
-  <div class="note" id="changelog">上次檢查 2026-10-01 22:30 台北。本次沒有新的原創研究帖。最新仍是 2026-09-30 20:39 UTC。</div>
+  <div class="note">收錄範圍從 2025 年 1 月起。1 月到 8 月沒有抓到原創研究帖，最早一則是 2025-09-29。回覆和沒有點名的帖仍未收錄，提及次數只算已收錄樣本。</div>
+  <div class="note" id="changelog">上次檢查 2026-10-01 22:30 台北。已補入 2025-09 至 2026-06 的研究帖。最新原創帖仍是 2026-09-30 20:39 UTC。</div>
   <input id="q" placeholder="搜尋代號，例如 LITE、JBL" />
   
   <footer>非投資建議。中文是判斷摘要，英文是對照，點連結才是原帖。</footer>
@@ -75,6 +75,69 @@
 <script>
 const N = (zh,en) => zh + "||" + en;
 const POSTS = [
+ {date:"2025-09-29",id:"1972807607598682369",theme:"Neocloud",tags:[
+  ["NBIS","bull","Nebius",N("她說開始寫作約兩個月，就已經在分享 NBIS 和 HIMS，而且是在大漲之前。這則是回顧，不是新的買賣。","She said she had been sharing NBIS and HIMS before the breakouts, about two months after starting. A lookback, not a new trade.")],
+  ["HIMS","bull","Hims",N("和 NBIS 並列成她早期就寫過、後來才大漲的名字。這則沒有新的基本面。","Named with NBIS as an early write-up that later broke out. No new fundamental case here.")]
+ ]},
+ {date:"2025-12-23",id:"2003476197028852074",theme:"Photonics",tags:[
+  ["AAOI","bull","Applied Optoelectronics",N("她把 Maia 300 的光學 BOM 看成 AAOI 的重估點，單一客戶就可能讓營收翻倍，但資格測試失敗可以被 LITE 換掉。這是推測模型，她自己標了不是事實。","She models Maia 300 optical BOM as the rerate for AAOI. One customer could double revenue, but a qualification miss could hand it to LITE. She marked it speculative.")],
+  ["MRVL","bull","Marvell",N("Maia 設計與 SerDes 是最大受益段，她估 80 到 120 億美元營收。這是 2026 末到 2027 的斜坡，不是當季。","Maia design and SerDes are the largest slice, modeled at $8-12B. A late-2026 to 2027 ramp, not this quarter.")],
+  ["LITE","bull","Lumentum",N("雷射光源端，和 Innolight 並列成已確立的光子玩家。AAOI 若失敗，她認為 LITE 可以接手。","Laser source, already established with Innolight. She also names LITE as the replacement if AAOI fails qualification.")],
+  ["COHR","bull","Coherent",N("光學織網的受益者，和 AAOI、Innolight 同一段，不是這則的主結論。","An optical-fabric beneficiary with AAOI and Innolight, not the lead call.")]
+ ]},
+ {date:"2025-12-26",id:"2004569946492453003",theme:"Materials",tags:[
+  ["AXTI","bull","AXT",N("她把 AXTI 和住友看成磷化銦基板雙寡頭，估市佔約 30% 到 35%。沒有基板，TPU、Maia 和光模組都會卡住。","She frames AXTI and Sumitomo as the InP-substrate duopoly, about 30-35% for AXTI. No substrates, and TPU, Maia and modules stall.")],
+  ["SMTOY","bull","Sumitomo",N("另一半基板供給，和 AXTI 合計她寫 60% 到 70%。這是瓶頸，不是單一財報。","The other half of substrate supply. Together she puts them at 60-70%. A bottleneck, not a print.")]
+ ]},
+ {date:"2025-12-29",id:"2005485130958430440",theme:"Materials",tags:[
+  ["AXTI","bull","AXT",N("基板雙寡頭之外，雷射級原料她估 78% 在中國，AXTI 約四分之一。瓶頸裡還有瓶頸。","Beyond the substrate duopoly, she puts 78% of laser-grade feedstock in China, about a quarter at AXTI.")],
+  ["DOWA","bull","Dowa",N("日本以外最大的原料供應，約 12%，是住友和 JX 的上游。","The largest non-China feedstock name, about 12%, upstream of Sumitomo and JX.")]
+ ]},
+ {date:"2025-12-30",id:"2006013108817678779",theme:"Neocloud",tags:[
+  ["NBIS","bull","Nebius",N("若能把 70 到 90 億美元 ARR 做成 20% 到 30% EBIT，她認為 85 美元被低估。賣壓被她看成執行證明前的機會，不是論點破裂。","If $7-9B ARR lands at 20-30% EBIT, she thinks $85 is off. The selloff is the wait for proof, not a broken case.")],
+  ["IREN","bull","Iris Energy",N("這則改口。她把微軟合約的槓桿 IRR 看成主題偏多，和 11 月的偏空不同。","A change of view. The Microsoft-deal IRR is now thematically long, unlike the November short.")],
+  ["CIFR","bull","Cipher",N("和 WULF 一起放進 Google 合作的 colo 主題，不是單獨深挖。","Grouped with WULF as the Google colo theme, not a standalone deep dive.")],
+  ["WULF","bull","TeraWulf",N("同樣是 neocloud colo，受益於 Google 交易。","Same colo basket, tied to the Google deal.")]
+ ]},
+ {date:"2025-12-31",id:"2006301094394335399",theme:"CPU",tags:[
+  ["MRVL","bull","Marvell",N("她認為 Trainium 3 不能中途換廠，Maia 換博通也要重做兩年以上。賣壓被她看成買點，不是訂單失去。","Trainium 3 cannot be swapped mid-cycle, and a Maia move to Broadcom would take years. The selloff is the buy, not a lost order.")],
+  ["AVGO","neut","Broadcom",N("新聞說博通可能接未來世代，她當雜訊，沒有改成做多博通。","The Broadcom displacement story is noise to her. Not a long on Broadcom.")]
+ ]},
+ {date:"2025-12-31",id:"2006434445205930103",theme:"Themes",tags:[
+  ["MRVL","bull","Marvell",N("年終稅務賣壓名單裡，她把 Marvell 放在有遠期營收、跌深的候選。不是無條件買進。","On the year-end tax-loss list, Marvell is a candidate with forward revenue and a drawdown. Not an unconditional buy.")],
+  ["SMCI","neut","Super Micro",N("遠期增長仍高，但她點名訂單遞延，要先排除基本面壞掉。","Forward growth is high, but she flags the backlog delay. Check that nothing is fundamentally broken.")],
+  ["HIMS","neut","Hims",N("三個月跌約 42%，放進一月效應觀察，不是新的研究結論。","Down about 42% in three months. A January-effect watch, not a new research call.")],
+  ["MSTR","bear","Strategy",N("跌深可以看，但她明確說 MSCI 剔除風險使它更危險。","Beaten down, but she explicitly calls the MSCI delisting risk a reason it is more dangerous.")]
+ ]},
+ {date:"2026-03-31",id:"2039011647264903382",theme:"Photonics",tags:[
+  ["LITE","bull","Lumentum",N("輝達再投 20 億美元並鎖產能，她對上 2025 年 EML 預鎖的同一套。瓶頸會往上游雷射走。","Nvidia put another $2B in and reserved capacity. She maps it to the 2025 EML lock. The crunch moves upstream.")],
+  ["COHR","bull","Coherent",N("同一筆輝達光學投資，和 LITE、MRVL 並列。","The same Nvidia optical check, alongside LITE and Marvell.")],
+  ["MRVL","bull","Marvell",N("輝達也投了 20 億美元，她看成 CPO 和 CW 瓶頸的信號，不是單日新聞。","Nvidia's $2B check is her signal for the CW and CPO bottleneck, not a one-day headline.")],
+  ["SIVE","bull","Sivers",N("雷射供應端會被同一波產能預鎖帶動。","Laser supply gets pulled into the same capacity reservation.")],
+  ["AEHR","bull","Aehr",N("測試段也被她放進受益鏈，不是主結論。","Test equipment is on the beneficiary chain, not the lead call.")]
+ ]},
+ {date:"2026-03-31",id:"2038971821635326368",theme:"Photonics",tags:[
+  ["AEHR","bull","Aehr",N("新的光模組客戶資格單，她比成 AAOI 放量前的測試階段。盤前漲 12.7%，結論是早期，不是已放量。","A new transceiver qualification. She compares it to AAOI before volume. Up 12.7% premarket; early, not a ramp.")]
+ ]},
+ {date:"2026-03-31",id:"2038934006734135572",theme:"Materials",tags:[
+  ["AXTI","bull","AXT",N("她拒絕把 AXTI 和 LITE 的基板廠混為一談。瓶頸在上游提煉和坩堝，基板廠做不到。","She rejects mixing AXTI with LITE's InP fab. The bottleneck is upstream extraction and crucibles.")],
+  ["SIVE","bull","Sivers",N("她看的是 2027 以後 CPO 放量，不是今年毛利率。Celestial 和 Jabil 已設計進去。","The frame is CPO volume after 2027, not this year's margin. Designed into Celestial and Jabil.")]
+ ]},
+ {date:"2026-06-26",id:"2070413682996347069",theme:"Memory",tags:[
+  ["MU","bull","Micron",N("她引用馬斯克說供給遠低於需求，並點名 MU、SK 海力士和三星的漲價。這是短缺確認，不是新模型。","She cites Musk on production far short of demand, naming Micron, SK Hynix and Samsung price hikes. A shortage check.")],
+  ["005930","bull","Samsung",N("和 MU、SK 海力士同一句短缺。","Same shortage sentence as Micron and SK Hynix.")]
+ ]},
+ {date:"2026-06-28",id:"2071135874100990438",theme:"Neocloud",tags:[
+  ["NBIS","bull","Nebius",N("她把 Meta 三月的大單，解釋成 Google 算力不夠、把容量讓出來。對 neocloud 資本開支偏多。","She reads Meta's March deals as Google restricting capacity. Positive for neocloud capex.")],
+  ["GOOGL","neut","Alphabet",N("雲端積壓幾乎翻倍，是算力不夠的觀察，不是這則的買賣。","Cloud backlog nearly doubled. An observation on compute, not the trade in this post.")]
+ ]},
+ {date:"2026-06-29",id:"2071488272245944399",theme:"Photonics",tags:[
+  ["LITE","bull","Lumentum",N("她用 POET 年會對上 LITE 總裁：雷射廠到 2028 售罄，POET 甚至講到 2029。","She matches POET's AGM to the Lumentum CEO: lasers sold out into 2028, POET implies 2029.")],
+  ["SIVE","bull","Sivers",N("POET 的高功率外部光源，她高信心對上 SIVE 的 ELS。","High confidence that POET's external light source maps to Sivers.")],
+  ["POET","neut","POET",N("展望偏多，但她寫自己沒有持有，而且不像 AAOI 那樣點名 hyperscaler。","The outlook is positive, but she does not own it and it lacks AAOI's named hyperscaler.")],
+  ["AAOI","bull","Applied Optoelectronics",N("拿來對照：AAOI 有點名客戶，POET 沒有。","The contrast: AAOI has named customers, POET does not.")]
+ ]},
+
  {date:"2025-11-17",id:"1990452960758042917",theme:"Neocloud",tags:[
   ["NBIS","bull","Nebius",N("她把 Nebius 當成當時最純的 neocloud 不對稱，認為賬在的不是短線財報，而是公司能不能把算力和客戶交付做出來。","She called Nebius the purest neocloud asymmetry left. The bet was execution, not the next print.")],
   ["IREN","bear","Iris Energy",N("全棧模式的執行路徑不夠清楚，所以不當成 neocloud 的首選。她把不確定性放在空頭一邊。","Full-stack execution was too unclear, so she did not treat it as the preferred neocloud.")],
