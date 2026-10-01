@@ -27,20 +27,28 @@
   td { padding:14px 12px; border-top:1px solid #eeeae3; } .name small { display:block; color:var(--muted); font-weight:420; }
   .bar { height:8px; background:#f0ebe3; border-radius:99px; display:flex; overflow:hidden; min-width:120px; } .bar i { display:block; height:100%; }
   button.link { border:0; background:none; padding:0; font:inherit; font-weight:750; cursor:pointer; color:#1c1b19; text-decoration:underline; }
-  .mask { position:fixed; inset:0; background:rgba(28,27,25,.35); display:none; align-items:center; justify-content:center; padding:24px; z-index:20; }
+  .mask { position:fixed; inset:0; background:rgba(22,21,19,.42); display:none; align-items:center; justify-content:center; padding:28px; z-index:20; }
   .mask.open { display:flex; }
-  .modal { width:min(720px, 100%); max-height:86vh; overflow:auto; background:#fbfaf7; border-radius:16px; padding:18px; }
-  .modal header { display:flex; justify-content:space-between; align-items:flex-start; } .modal h3 { font-family:Newsreader, serif; font-size:32px; margin:0; }
-  .sum, .item { background:#fff; border:1px solid #eeeae2; border-radius:12px; padding:12px 14px; margin:8px 0; line-height:1.5; }
-  .item b { display:block; margin-bottom:4px; } .item a { color:#335fd1; }
+  .modal { width:min(640px, 100%); max-height:84vh; overflow:auto; background:#f7f5f0; border-radius:20px; padding:22px 22px 18px; box-shadow:0 24px 60px rgba(28,27,25,.18); }
+  .modal header { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
+  .kicker { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:#8a847a; }
+  .modal h3 { font-family:Newsreader, serif; font-size:40px; line-height:.95; margin:4px 0 0; letter-spacing:-.03em; }
+  .pill { display:inline-block; margin-top:8px; background:#e7f3ec; color:#1f8a4d; border-radius:999px; padding:4px 10px; font-size:12px; font-weight:650; }
+  .pill.neg { background:#fbeeee; color:#c4473a; }
+  .x { width:32px; height:32px; border:0; border-radius:50%; background:#fff; cursor:pointer; font-size:16px; }
+  .sum { margin:16px 0 8px; color:#3f3c37; line-height:1.5; font-size:15px; }
+  .tl { margin-top:8px; border-top:1px solid #e6e1d6; }
+  .item { display:grid; grid-template-columns:108px 1fr; gap:14px; padding:14px 0; border-bottom:1px solid #ece7dc; }
+  .item b { display:block; font-size:13px; } .item span { color:#8a847a; font-size:12px; }
+  .item a { color:#335fd1; font-size:13px; text-decoration:none; } .item p { margin:4px 0 6px; line-height:1.45; }
   footer { color:var(--muted); font-size:12px; margin-top:16px; }
-  @media (max-width:980px) { .grid { grid-template-columns:1fr 1fr; } h1 { font-size:32px; } }
+  @media (max-width:980px) { .grid { grid-template-columns:1fr 1fr; } h1 { font-size:32px; } .item { grid-template-columns:1fr; } }
 </style></head><body>
 <div class="page">
   <div class="tabs"><button data-r="theme" class="on">Themes 主題</button><button data-r="day">Daily 日</button><button data-r="week">Weekly 週</button><button data-r="month">Monthly 月</button></div>
   <div class="head"><h1 id="title">Monthly Consensus</h1><div class="range" id="range">Sample · 1 Oct 2026</div></div>
   <h2>Top bullish name in each theme</h2>
-  <p class="hint">五張卡是五個主題，不是同一檔。點代號開視窗。</p>
+  <p class="hint">點代號開時間軸。左邊日期，右邊判斷和原文。</p>
   <div class="grid" id="cards"></div>
   <table><thead><tr><th>Stock</th><th>Bull %</th><th>Position split</th><th>Bear %</th><th>Mentions</th><th>Bullish</th><th>Bearish</th><th>Neutral</th><th>Latest</th></tr></thead><tbody id="rows"></tbody></table>
   <footer>非投資建議。總結依公開文字整理，點連結才是原帖。</footer>
@@ -104,7 +112,7 @@ function table(){
 function openTicker(t){
   const r = rows.find(x => x.t===t); if (!r) return;
   const lead = r.bull>r.bear ? "整體偏多" : r.bear>r.bull ? "整體偏空" : "多空交錯";
-  document.getElementById("modal").innerHTML = `<header><div><h3>${r.t}</h3><div class="hint">${r.name} · ${r.items.length} 次提及</div></div><button class="link" id="close">關閉</button></header><div class="sum">${lead}。下面 ${r.items.length} 段，一段對一次提及。</div>` + r.items.slice().reverse().map((item,i)=>`<div class="item"><b>${i+1}. ${item.date} · ${label[item.stance]}</b><div>${item.note}</div><div style="margin-top:6px"><a href="https://x.com/aleabitoreddit/status/${item.id}" target="_blank">原文連結</a></div></div>`).join("");
+  document.getElementById("modal").innerHTML = `<header><div><div class="kicker">${r.name}</div><h3>${r.t}</h3><div class="pill ${r.bear>r.bull?"neg":""}">${lead} · ${r.items.length} 次</div></div><button class="x" id="close">×</button></header><p class="sum">每次提及一段。先看她當時的判斷，再進原文。</p><div class="tl">` + r.items.slice().reverse().map(item=>`<div class="item"><div><b>${item.date.slice(5)}</b><span>${item.date.slice(0,4)} · ${label[item.stance]}</span></div><div><p>${item.note}</p><a href="https://x.com/aleabitoreddit/status/${item.id}" target="_blank">原文 →</a></div></div>`).join("") + `</div>`;
   document.getElementById("mask").classList.add("open");
   document.getElementById("close").onclick = () => document.getElementById("mask").classList.remove("open");
 }
