@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>獨立筆記 · 公開貼文整理</title>
+<title>Serenity Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,560&family=Inter:wght@420;560;680&display=swap" rel="stylesheet" />
 <style>
   :root { --bg:#f3f1ea; --ink:#1c1b19; --muted:#7a756c; --line:#e6e1d6; --green:#1f8a4d; --red:#c4473a; --blue:#335fd1; }
@@ -61,7 +61,7 @@
 </style></head><body>
 <div class="page">
   <div class="tabs"><button data-r="theme" class="on">Themes 主題</button><button data-r="day">Daily 日</button><button data-r="week">Weekly 週</button><button data-r="month">Monthly 月</button></div>
-  <div class="head"><h1 id="title">主題共識</h1><div class="range" id="range">2025-09-29 至 2026-09-30</div></div>
+  <div class="head"><h1 id="title">Serenity Tracker</h1><div class="range" id="range"></div></div>
   <input id="q" placeholder="搜尋代號，例如 LITE、JBL" />
   <h2>各主題裡提及最多的多頭</h2>
   <p class="hint">點代號看每次判斷、日期和原文。右欄是已收錄的原創帖，沒有新帖會直接寫沒有。</p>
@@ -308,8 +308,8 @@ function openTicker(t){
   document.getElementById("close").onclick = () => document.getElementById("mask").classList.remove("open");
 }
 function render(){
-  document.getElementById("title").textContent = {theme:"主題共識",day:"當日立場",week:"本週立場",month:"本月立場"}[mode];
-  document.getElementById("range").textContent = mode==="day" ? "2026-09-30" : mode==="week" ? "2026-09-24 起" : "2025-09-29 至 2026-09-30";
+  document.getElementById("title").textContent = {theme:"Serenity Tracker",day:"當日立場",week:"本週立場",month:"本月立場"}[mode];
+  document.getElementById("range").textContent = mode==="day" ? "2026-09-30" : mode==="week" ? "2026-09-24 起" : "";
   rows = agg(); cards(); table();
   document.querySelectorAll("[data-t]").forEach(el => el.onclick = () => openTicker(el.dataset.t));
 }
