@@ -57,12 +57,55 @@
   .method { margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.5; max-width:760px; }
   .tablewrap { overflow-x:auto; border:1px solid var(--line); border-radius:12px; background:#fff; }
   .tablewrap table { border:0; }
+  .reports { margin:14px 0 8px; }
+  .rtabs { margin-bottom:10px; }
+  .report { background:#fff; border:1px solid #eeeae2; border-radius:14px; padding:16px 18px 8px; }
+  .report.hide { display:none; }
+  .report h2 { font-family:Newsreader, serif; font-size:28px; margin:0; }
+  .when { color:var(--muted); font-size:12px; margin:4px 0 10px; }
+  .report h3 { font-size:14px; margin:14px 0 4px; }
+  .report p { font-size:14px; line-height:1.55; margin:6px 0; }
+  .report a { color:#335fd1; font-size:13px; }
   @media (max-width:980px) { .grid, .split, .item { grid-template-columns:1fr; } .head { flex-direction:column; align-items:flex-start; gap:6px; } .tabs { max-width:100%; } h1 { font-size:28px; } #q { width:100%; } }
 </style></head><body>
 <div class="page">
-  <div class="tabs"><button data-r="theme" class="on">Themes 主題</button><button data-r="day">Daily 日</button><button data-r="week">Weekly 週</button><button data-r="month">Monthly 月</button></div>
+  <div class="tabs stance"><button data-r="theme" class="on">Themes 主題</button><button data-r="day">Daily 日</button><button data-r="week">Weekly 週</button><button data-r="month">Monthly 月</button></div>
   <div class="head"><h1 id="title">Serenity Tracker</h1><div class="range" id="range"></div></div>
   <input id="q" placeholder="搜尋代號，例如 LITE、JBL" />
+  <section class="reports">
+    <div class="tabs rtabs"><button type="button" data-rep="daily" class="on">日報 Daily</button><button type="button" data-rep="weekly">週報 Weekly</button></div>
+    <article class="report" id="rep-daily">
+      <h2>10 月 2 日沒有新帖</h2>
+      <p class="when">Daily · 2026-10-02 · 每天 09:30 台北更新</p>
+      <p>台北時間 10 月 2 日凌晨檢查，@aleabitoreddit 在 9 月 30 日 20:39 UTC 之後沒有新的原創研究帖。09:30 會再查一次。下面是最近一個有內容的交易日，不是今天的新觀點。</p>
+      <p class="en">Checked in the early hours of 2 Oct, Taipei. No new original research post after 30 Sep, 20:39 UTC. The 09:30 run will check again. The notes below are the last session with posts, not a new call today.</p>
+      <h3>9 月 30 日 · 三則</h3>
+      <p>Gemini 4 Argon 對上 GPT-6 Astra 和 Anthropic 的新模型。她認為 Google 內部模型一直很強，公開後可能因算力被限制；這次的判斷是 Google 回來了。MU 和 JBL 財報她明講稍後再評，這則沒有新的買賣。<a href="https://x.com/aleabitoreddit/status/2105397070681248021" target="_blank">原文</a></p>
+      <p class="en">Gemini 4 Argon against GPT-6 Astra and Anthropic’s newer models. She reads Google as back. MU and JBL earnings were deferred, so this post is not a new trade. <a href="https://x.com/aleabitoreddit/status/2105397070681248021" target="_blank">Original</a></p>
+      <p>JBL 財報本身好於市場反應。價格沒跟上被當成買點，不是組裝邏輯轉差。<a href="https://x.com/aleabitoreddit/status/2105377657043206492" target="_blank">原文</a></p>
+      <p class="en">The JBL print was better than the reaction. The gap is the buy, not a broken assembly case. <a href="https://x.com/aleabitoreddit/status/2105377657043206492" target="_blank">Original</a></p>
+      <p>Amazon 以 4,980 萬美元入股金像電，約佔 0.36%。她把地圖從光學、ASIC 拉到組裝和 PCB。金額小，戰略意義較大。<a href="https://x.com/aleabitoreddit/status/2105151002760679706" target="_blank">原文</a></p>
+      <p class="en">Amazon put $49.8 million into Gold Circuit, about 0.36%. She extends the map from optics and ASICs to assembly and PCBs. Small financially, larger strategically. <a href="https://x.com/aleabitoreddit/status/2105151002760679706" target="_blank">Original</a></p>
+    </article>
+    <article class="report hide" id="rep-weekly">
+      <h2>光子產能，和 Amazon 的供應鏈地圖</h2>
+      <p class="when">Weekly · 2026-09-28 至 2026-10-04 · 星期日 09:30 台北改寫。這是進行中的一週。</p>
+      <p>這週主線不是新的 neocloud。她在寫兩件事：高功率雷射產能被預鎖，以及 Amazon 把持股從雷射、ASIC 拉到 PCB 和組裝。</p>
+      <p class="en">The week is not a new neocloud call. It is a laser-capacity lock, and Amazon extending its stakes from lasers and ASICs into PCBs and assembly.</p>
+      <h3>9 月 28 日</h3>
+      <p>她帶病仍寫光子瓶頸。若 Nvidia 鎖下 LITE Greensboro 約一半高功率雷射產能，其他商用雷射廠的戰略價值會上升，LITE 自己也更難替代。MRVL 的大尺寸基板被她看成專案瓶頸，擴產偏多。NVDA 這則只有鎖料和回購，沒有直接買賣。<a href="https://x.com/aleabitoreddit/status/2104698369591706069" target="_blank">原文</a></p>
+      <p class="en">Ill, she still wrote the photonics bottleneck. A Nvidia lock on about half of LITE’s Greensboro UHP capacity would make other merchant lasers more strategic, and LITE harder to replace. Large-body substrates are a positive for MRVL. NVDA itself gets no trade in that post. <a href="https://x.com/aleabitoreddit/status/2104698369591706069" target="_blank">Original</a></p>
+      <h3>9 月 30 日</h3>
+      <p>Amazon 入股金像電（2368）之後，同一張圖裡 AAOI 是雷射、JBL 是組裝。她隨後把 JBL 財報解讀成市場反應過度。最後一則 Gemini 4 讓她說 Google 回來了；MU 和 JBL 只說稍後再評，沒有改寫之前的記憶體偏多。</p>
+      <p class="en">After the Gold Circuit stake, AAOI is the laser leg and JBL is assembly. She then treated the JBL reaction as too weak. Gemini 4 is “Google is back.” The MU and JBL deferral does not rewrite the earlier memory long.</p>
+      <h3>這週沒有翻轉</h3>
+      <p>已收錄的帖裡，這週沒有立場翻轉。上週 9 月 24 日才有：IREN 在 60 億美元增發走完前從偏空改成中性，AAOI 因增發從偏多降到中性。這週這兩檔沒有新帖。</p>
+      <p class="en">No stance flip in this week’s collected posts. The prior flips were 24 Sep: IREN to neutral until the $6 billion ATM is done, and AAOI cut to neutral on dilution. Neither got a new post this week.</p>
+      <h3>沒寫的</h3>
+      <p>10 月 1 日和 2 日沒有新的原創研究帖。星期日 09:30 會把這週收到 10 月 4 日再改寫一次。</p>
+      <p class="en">No new original research post on 1 or 2 Oct. Sunday at 09:30 Taipei rewrites the week through 4 Oct.</p>
+    </article>
+  </section>
   <h2>各主題裡提及最多的多頭</h2>
   <p class="hint">點代號看每次判斷、日期和原文。右欄是已收錄的原創帖，沒有新帖會直接寫沒有。</p>
   <div class="grid" id="cards"></div>
@@ -72,7 +115,7 @@
   </div>
   <div class="banner"><b>獨立筆記。不是她的產品，不是投資建議。</b> 整理自 @aleabitoreddit 公開貼文。只放短摘和原文連結，不轉載全文。價格沒有收盤來源就標未核對，不估算報酬。她可能持有相關標的。</div>
   <div class="note">收錄範圍從 2025 年 1 月起。1 月到 8 月沒有抓到原創研究帖，最早一則是 2025-09-29。回覆和沒有點名的帖仍未收錄，提及次數只算已收錄樣本。</div>
-  <div class="note" id="changelog">上次檢查 2026-10-01 22:56 台北。這次沒有新的原創研究帖。最新仍是 2026-09-30 20:39 UTC。</div>
+  <div class="note" id="changelog">上次檢查 2026-10-02 00:32 台北。這次沒有新的原創研究帖。最新仍是 2026-09-30 20:39 UTC。日報每天 09:30 更新，週報星期日 09:30 改寫。</div>
   
   
   <footer>非投資建議。中文是判斷摘要，英文是對照，點連結才是原帖。</footer>
@@ -314,9 +357,14 @@ function render(){
   document.querySelectorAll("[data-t]").forEach(el => el.onclick = () => openTicker(el.dataset.t));
 }
 document.getElementById("q").oninput = () => { const q = document.getElementById("q").value.trim().toUpperCase(); document.querySelectorAll("#rows tr").forEach(tr => tr.style.display = !q || tr.innerText.toUpperCase().includes(q) ? "" : "none"); };
-document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => { mode=b.dataset.r; document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on", x===b)); render(); });
+document.querySelectorAll(".stance button").forEach(b => b.onclick = () => { mode=b.dataset.r; document.querySelectorAll(".stance button").forEach(x=>x.classList.toggle("on", x===b)); render(); });
+document.querySelectorAll(".rtabs button").forEach(b => b.onclick = () => {
+  document.querySelectorAll(".rtabs button").forEach(x => x.classList.toggle("on", x===b));
+  document.getElementById("rep-daily").classList.toggle("hide", b.dataset.rep!=="daily");
+  document.getElementById("rep-weekly").classList.toggle("hide", b.dataset.rep!=="weekly");
+});
 document.getElementById("mask").onclick = e => { if (e.target.id==="mask") e.currentTarget.classList.remove("open"); };
 document.getElementById("feed").innerHTML = FEED.map(p => `<article class="post"><time>${p.date} UTC</time>${bi(p.text)}<a href="https://x.com/aleabitoreddit/status/${p.id}" target="_blank">原文 Original →</a></article>`).join("");
-document.getElementById("feed-meta").textContent = "上次檢查 2026-10-01 22:56 台北。這次沒有新的原創帖。最新仍是 2026-09-30 20:39 UTC。";
+document.getElementById("feed-meta").textContent = "上次檢查 2026-10-02 00:32 台北。這次沒有新的原創帖。最新仍是 2026-09-30 20:39 UTC。";
 render();
 </script></body></html>
