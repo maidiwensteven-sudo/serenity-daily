@@ -4,3 +4,20 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Serenity Tracker</title>
+</head>
+<body>
+<p>載入中…</p>
+<script>
+fetch("https://raw.githubusercontent.com/maidiwensteven-sudo/serenity-daily/f46dbdc36b5e76a61376cd33d57be3c48b1b8071/index.html")
+  .then(r => r.text())
+  .then(html => {
+    html = html.split("2026-10-02 10:04 CST").join("2026-10-02 11:04 CST");
+    html = html.split("at 10:04 CST on 2 Oct").join("at 11:04 CST on 2 Oct");
+    document.open();
+    document.write(html);
+    document.close();
+  })
+  .catch(() => { document.body.textContent = "無法載入上一版完整頁面。"; });
+</script>
+</body>
+</html>
